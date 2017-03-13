@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+
+<div class="container">
+  <h1>Please Sign in to ScienceScholer</h1>
+  <p>It's free</p>
+
+  <form  action="" method=post>
+    <dl>
+      {{ render_field(form.email) }}
+      {{ render_field(form.password) }}
+    </dl>
+    <p><input class="btn btn-lg btn-primary"type="submit" value="Login">
+  </form>
+
+  <p> Dont have an ScienceSonar account yet? </p>
+  <a href="/register" class="btn btn-lg btn-secondary">Register</a>
+</div> <!-- /container -->
+
+{% endblock %}

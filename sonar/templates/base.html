@@ -15,7 +15,6 @@
     <!-- Custom style -->
     <link href="static/css/sonar.css" rel="stylesheet">
   </head>
-
   <body>
   
    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
@@ -48,15 +47,29 @@
       </div>
     </nav>
 
-    <!-- Render Content here -->
+    <!-- Render Flash Messages -->
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+    <!-- End Flash Messages -->
 
+    <!-- Render Content here -->
     {% block content %}{% endblock %}
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="static/vendor/js/jquery-slim.min.js"></script>
-
     <script src="static/vendor/js/tether.min.js"></script>
     <script src="static/vendor/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
