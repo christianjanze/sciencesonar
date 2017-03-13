@@ -1,33 +1,77 @@
 from sonar import app
-from flask import flash, render_template, request, url_for, redirect
-from sonar.forms import LoginForm, RegistrationForm
-from sonar.models import db
+from flask import flash, render_template, request, url_for, redirect, session
+from sonar.forms import SignupForm, SigninForm
+from sonar.models import db, User
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-	form = RegistrationForm(request.form)
-	if request.method == 'POST' and form.validate():
-		user = User(form.email.data, form.password.data)
-		db_session.add(user)
-		flash('Thank you for registering')
-		return redirect(url_for('login'))
-	return render_template('register.html', form=form)
-
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-	form = LoginForm(request.form)
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+	form = SignupForm()
+	
+	#If already logged in redirect to profile
+	if 'email' in session:
+		flash("You are already logged in. Please sign out before creating a new account.","danger")
+		return redirect(url_for('profile'))
 
 	if request.method == 'POST' and form.validate():
-		username = form.email.data
-		password = form.password.data
-		flash('Thank you for logging in', 'success')
-		return redirect(url_for('index'))
+		newuser = User(form.firstname.data, form.lastname.data, form.email.data, form.password.data)
+		db.session.add(newuser)
+		db.session.commit()
+		session['email'] = newuser.email
+		
+		flash("Welcome! You successfully created an ScienceSonar account.", "success")
+
+		return redirect(url_for('profile'))
+
+	elif request.method == 'POST' and not form.validate(): 
+		flash("Oops... Something went wrong", "danger")
+		return render_template('signup.html', form=form)
+
 	else:
-		return render_template('login.html', form=form)
+		return render_template('signup.html', form=form)
 
-@app.route("/logout")
-def logout():
-	return render_template('logout.html')
+@app.route('/profile')
+def profile():
+	if 'email' not in session:
+		return redirect(url_for('signin'))
+	user = User.query.filter_by(email = session['email']).first()
+ 
+	if user is None:
+		return redirect(url_for('signin'))
+	else:
+		return render_template('profile.html')
+
+
+@app.route('/signin', methods=['GET', 'POST'])
+def signin():
+	form = SigninForm()
+
+	#If already logged in redirect to profile
+	if 'email' in session:
+		flash("You are already logged in. Please sign out before signing in again.","danger")
+		return redirect(url_for('profile')) 
+
+	if request.method == 'POST' and form.validate():
+		flash("Welcome back on ScienceSonar", "success")
+		session['email'] = form.email.data
+		return redirect(url_for('profile'))
+
+	elif request.method == 'POST' and not form.validate():
+		flash("Error logging in. Please try again.", "danger")
+		return render_template('signin.html', form=form)			 
+	
+	else:
+		return render_template('signin.html', form=form)
+
+@app.route('/signout')
+def signout():
+
+	if 'email' not in session:
+		return redirect(url_for('signin'))
+
+	flash("See you! Successfully logged out.","success")
+	session.pop('email', None)
+	return redirect(url_for('index'))
+
 
 @app.route("/")
 def index():
@@ -44,10 +88,3 @@ def share():
 @app.route("/about")
 def about():
 	return render_template('about.html')
-
-@app.route('/testdb')
-def testdb():
-	if db.session.query("1").from_statement("SELECT 1").all():
-		return 'It works.'
-	else:
-		return 'Something is broken.'

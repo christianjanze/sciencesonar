@@ -3,8 +3,7 @@
 {% from "_formhelpers.html" import render_field %}
 
 <div class="container">
-  <h1>Please Sign in to ScienceScholer</h1>
-  <p>It's free</p>
+  <h1>Sign in to ScienceScholer</h1>
 
   <form  action="" method=post>
     <dl>
@@ -14,8 +13,7 @@
     <p><input class="btn btn-lg btn-primary"type="submit" value="Login">
   </form>
 
-  <p> Dont have an ScienceSonar account yet? </p>
-  <a href="/register" class="btn btn-lg btn-secondary">Register</a>
+  <p> Dont have an ScienceSonar account yet? <a href="{{ url_for('signup') }}">Signup</a></p>
 </div> <!-- /container -->
 
 {% endblock %}

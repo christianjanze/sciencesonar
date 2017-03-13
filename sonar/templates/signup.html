@@ -4,7 +4,7 @@
 {% from "_formhelpers.html" import render_field %}
 
 <div class="container">   
-  <form  action="" method=post>
+   <form action="{{ url_for('signup') }}" method=post>
     <dl>
       {{ render_field(form.firstname) }}
       {{ render_field(form.lastname) }}
@@ -13,7 +13,7 @@
       {{ render_field(form.confirm) }}
       {{ render_field(form.accept_tos) }}
     </dl>
-    <p><input type=submit value=Register>
+    <p><input type=submit value=Sign up>
   </form>
 </div> <!-- /container -->
 {% endblock %}
