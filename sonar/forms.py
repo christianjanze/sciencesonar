@@ -1,12 +1,12 @@
 from flask_wtf import Form
 from flask import flash
-from wtforms import BooleanField, TextField, PasswordField, validators, ValidationError
+from wtforms import BooleanField, StringField, PasswordField, validators, ValidationError
 from sonar.models import db, User
 
 class SignupForm(Form):
-	firstname = TextField('First Name', [validators.Length(min=1, max=100)])
-	lastname = TextField('Last Name', [validators.Length(min=1, max=100)])
-	email = TextField('E-Mail Address', [validators.Length(min=1, max=120)])
+	firstname = StringField('First Name', [validators.Length(min=1, max=100)])
+	lastname = StringField('Last Name', [validators.Length(min=1, max=100)])
+	email = StringField('E-Mail Address', [validators.Length(min=1, max=120)])
 	password = PasswordField('Password', [
 		validators.DataRequired(),
 		validators.EqualTo('confirm', message='Passwords must match')
@@ -23,7 +23,7 @@ class SignupForm(Form):
 			return True
 
 class SigninForm(Form):
-	email = TextField("Email",  [validators.Required("Please enter your email address."), validators.Email("Please enter your email address.")])
+	email = StringField("Email",  [validators.Required("Please enter your email address."), validators.Email("Please enter your email address.")])
 	password = PasswordField('Password', [validators.Required("Please enter a password.")])
 
 	def validate(self):
@@ -31,5 +31,4 @@ class SigninForm(Form):
 		if user and user.check_password(self.password.data):
 			return True
 		else:
-			self.email.errors.append("Invalid e-mail or password")
 			return False

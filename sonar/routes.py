@@ -18,7 +18,7 @@ def signup():
 		db.session.commit()
 		session['email'] = newuser.email
 		
-		flash("Welcome! You successfully created an ScienceSonar account.", "success")
+		flash("Welcome! You've successfully created your ScienceSonar account.", "success")
 
 		return redirect(url_for('profile'))
 
@@ -33,6 +33,7 @@ def signup():
 def profile():
 	if 'email' not in session:
 		return redirect(url_for('signin'))
+		
 	user = User.query.filter_by(email = session['email']).first()
  
 	if user is None:
@@ -47,7 +48,7 @@ def signin():
 
 	#If already logged in redirect to profile
 	if 'email' in session:
-		flash("You are already logged in. Please sign out before signing in again.","danger")
+		flash("You are already logged in. Please sign out before signing in.","danger")
 		return redirect(url_for('profile')) 
 
 	if request.method == 'POST' and form.validate():
