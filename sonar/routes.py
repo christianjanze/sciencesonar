@@ -1,13 +1,21 @@
 from sonar import app
 from flask import flash, render_template, request, url_for, redirect, session
-from sonar.forms import SignupForm, SigninForm
-from sonar.models import db, User
+from sonar.forms import SignupForm, SigninForm, IdeaForm
+from sonar.models import db, User, Idea
+
+# Auxiliary function to generate flash messages from errors in forms
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(u"Error in the %s field - %s" % (
+                getattr(form, field).label.text,
+                error
+            ))
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
 	form = SignupForm()
 	
-	#If already logged in redirect to profile
 	if 'email' in session:
 		flash("You are already logged in. Please sign out before creating a new account.","danger")
 		return redirect(url_for('profile'))
@@ -73,6 +81,42 @@ def signout():
 	session.pop('email', None)
 	return redirect(url_for('index'))
 
+
+@app.route('/idea', methods=['GET', 'POST'])
+def idea():
+
+	form = IdeaForm()
+	
+	#Check if user is signed in
+	if 'email' not in session:
+		flash("You must be signed in to post an idea.")
+		return redirect(url_for('signin'))
+		
+	user = User.query.filter_by(email = session['email']).first()
+
+	if user is None:
+		flash("You must be signed in to post an idea.")
+		return redirect(url_for('signin'))
+
+	#if user is signed in...
+	if request.method == 'POST' and form.validate():
+		
+		newidea = Idea(form.title.data, form.description.data, user.uid)
+		db.session.add(newidea)
+		db.session.commit()
+		
+		flash("Thank you for creating the new idea", "success")
+
+		return redirect(url_for('profile'))
+
+	elif request.method == 'POST' and not form.validate(): 
+
+		flash_errors(form)
+		flash("Oops... Something went wrong", "danger")
+		return render_template('idea.html', form=form)
+
+	else:
+		return render_template('idea.html', form=form)
 
 @app.route("/")
 def index():

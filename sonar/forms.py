@@ -32,3 +32,7 @@ class SigninForm(Form):
 			return True
 		else:
 			return False
+
+class IdeaForm(Form):
+	title = StringField('Title Text', [validators.Length(min=1, max=100)])
+	description = StringField('Description Text', [validators.Length(min=1, max=100)])
