@@ -13,10 +13,8 @@ class User(db.Model):
 	pwdhash = db.Column(db.String(54))
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 
-	# Define relationships
-	# todo add
-	#datasets = db.relationship('Dataset', backref='User', lazy='dynamic')
 	ideas = db.relationship('Idea', backref='User', lazy='dynamic')
+	datasets = db.relationship('Dataset', backref='User', lazy='dynamic')
 
 	def __init__(self, firstname, lastname, email, password):
 		self.firstname = firstname.title()
@@ -44,4 +42,26 @@ class Idea(db.Model):
 	def __init__(self, title, description, user_id):
 		self.title = title
 		self.description = description
+		self.user_id = user_id
+
+class Dataset(db.Model):
+	__tablename__ = 'datasets'
+	did = db.Column(db.Integer, primary_key = True)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.uid'))
+	description = db.Column(db.String(2000))
+	filename = db.Column(db.String(300))
+	filename_disk = db.Column(db.String(350))
+	filesize_bytes = db.Column(db.Float)
+	license = db.Column(db.String(200))
+	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+	#TODO: ADD FIELDS
+	#scientific_area = db.Column(db.String(100))
+	#scientific_subarea = db.Column(db.String(100))
+
+	def __init__(self, description, filename, filename_disk, filesize_bytes, license, user_id):
+		self.description = description
+		self.filename = filename
+		self.filename_disk = filename_disk
+		self.filesize_bytes = filesize_bytes
+		self.license = license
 		self.user_id = user_id
