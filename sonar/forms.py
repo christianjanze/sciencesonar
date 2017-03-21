@@ -8,7 +8,7 @@ from sonar.models import db, User
 class SignupForm(Form):
 	firstname = StringField('First Name', [validators.Length(min=1, max=100)])
 	lastname = StringField('Last Name', [validators.Length(min=1, max=100)])
-	email = StringField('E-Mail Address', [validators.Length(min=1, max=120)])
+	username = StringField('E-Mail Address', [validators.Length(min=1, max=120)])
 	password = PasswordField('Password', [
 		validators.DataRequired(),
 		validators.EqualTo('confirm', message='Passwords must match')
@@ -17,23 +17,15 @@ class SignupForm(Form):
 	accept_tos = BooleanField('I hereby accept the Terms of Service', [validators.DataRequired()])
 
 	def validate(self):
-		user = User.query.filter_by(email = self.email.data.lower()).first()
-		if user:
-			flash("E-Mail address is already in use", "danger")
+		if User.query.filter_by(username = self.username.data.lower()).first():
+			flash("Username is already in use", "danger")
 			return False
 		else:
 			return True
 
 class SigninForm(Form):
-	email = StringField("Email",  [validators.Required("Please enter your email address."), validators.Email("Please enter your email address.")])
+	username = StringField("Username",  [validators.Required("Please enter your username"), validators.Email("Please enter your yousername.")])
 	password = PasswordField('Password', [validators.Required("Please enter a password.")])
-
-	def validate(self):
-		user = User.query.filter_by(email = self.email.data.lower()).first()
-		if user and user.check_password(self.password.data):
-			return True
-		else:
-			return False
 
 class IdeaForm(Form):
 	title = StringField('Title', [validators.Length(min=1, max=100)])

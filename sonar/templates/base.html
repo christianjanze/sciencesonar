@@ -35,9 +35,9 @@
             <a class="nav-link" href="/about">About</a>
           </li>
 
-      {% if 'email' in session %}
+      {% if g.user.is_authenticated %}
        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Your Account</a>
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Your Account</a>
             <div class="dropdown-menu" aria-labelledby="dropdown01">
               <a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a>
               <a class="dropdown-item" href="{{ url_for('signout') }}">Signout</a>
