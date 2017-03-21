@@ -3,14 +3,31 @@
 {% from "_formhelpers.html" import render_field %}
 
 <div class="container">   
-  <h1>Add a new research idea</h1>
-   <form action="{{ url_for('idea') }}" method=post>
-    <dl>
-      {{ form.hidden_tag() }}
-      {{ render_field(form.title) }}
-      {{ render_field(form.description) }}
-    </dl>
-    <p><input type=submit value=Save Idea>
-  </form>
+	<div class="stepwizard">
+	    <div class="stepwizard-row">
+	        <div class="stepwizard-step">
+	            <button type="button" class="btn btn-primary btn-circle">1</button>
+	            <p>Describe Idea</p>
+	        </div>
+	        <div class="stepwizard-step">
+	             <button type="button" class="btn btn-default btn-circle" disabled="disabled">2</button>
+	            <p>Add Dataset(s)</p>
+	        </div>
+	        <div class="stepwizard-step">
+	            <button type="button" class="btn btn-default btn-circle" disabled="disabled">3</button>
+	            <p>Review & Publish</p>
+	        </div> 
+	    </div>
+	</div>
+
+	<h1>Please Describe Your Idea</h1>
+	   <form action="{{ url_for('idea') }}" method=post>
+	    <dl>
+	      {{ form.hidden_tag() }}
+	      {{ render_field(form.title) }}
+	      {{ render_field(form.description) }}
+	    </dl>
+	    <p><input type=submit value=Save Idea>
+	 </form>
 </div> <!-- /container -->
 {% endblock %}

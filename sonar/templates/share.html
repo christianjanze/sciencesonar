@@ -3,6 +3,10 @@
 
 <div class="container">
 	<h1>Share Research Opportunities</h1>
+	<a href="/idea" class="btn btn-primary">New Idea</a>
+	 {% for idea in ideas %}
+      <li>{{ idea.title }} {{ idea.description }}</li>
+    {% endfor %}
 </div>
 
 {% endblock %}

@@ -1,6 +1,7 @@
 from flask_wtf import Form
 from flask import flash
-from wtforms import BooleanField, StringField, PasswordField, TextField, validators, ValidationError
+from wtforms import BooleanField, StringField, PasswordField, validators, ValidationError
+from wtforms.widgets import TextArea
 from flask_wtf.file import FileField, FileRequired
 from sonar.models import db, User
 
@@ -35,9 +36,11 @@ class SigninForm(Form):
 			return False
 
 class IdeaForm(Form):
-	title = StringField('Title Text', [validators.Length(min=1, max=100)])
-	description = StringField('Description Text', [validators.Length(min=1, max=100)])
+	title = StringField('Title', [validators.Length(min=1, max=100)])
+	description = StringField('Description', [validators.Length(min=1, max=100)], widget=TextArea())
+	scientific_area = StringField('Scientific Area')
+	scientific_subarea = StringField('Scienific Subarea')
 
 class DatasetForm(Form):
-	description = TextField('Dataset Description')
+	description = StringField('Description', widget=TextArea())
 	dataset = FileField(validators=[FileRequired()])

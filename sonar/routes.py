@@ -75,6 +75,9 @@ def signin():
 	else:
 		return render_template('signin.html', form=form)
 
+
+
+
 @app.route('/signout')
 def signout():
 
@@ -99,12 +102,13 @@ def idea():
 		flash("You must be signed in to post an idea.")
 		return redirect(url_for('signin'))
 
+	
 	#if user is signed in...
 	form = IdeaForm()
 
 	if request.method == 'POST' and form.validate():
 		
-		newidea = Idea(form.title.data, form.description.data, user.uid)
+		newidea = Idea(form.title.data, form.description.data, user.uid, form.scientific_area.data, form.scientific_subarea.data)
 		db.session.add(newidea)
 		db.session.commit()
 		
@@ -118,7 +122,8 @@ def idea():
 		flash("Oops... Something went wrong", "danger")
 		return render_template('idea.html', form=form)
 
-	else:
+	elif request.method =='GET':
+
 		return render_template('idea.html', form=form)
 
 
@@ -138,21 +143,23 @@ def dataset():
 
 	#if user is signed in...
 	form = DatasetForm()
+
 	if request.method == 'POST' and form.validate():
 		f = form.dataset.data
 		filename = secure_filename(f.filename)
 
+		#Calc UNIX UTC timestanmp
 		d = datetime.datetime.utcnow()
 		unixtime = calendar.timegm(d.utctimetuple())
 
+		#
 		filename_disk = str(user.uid) + "_" + str(unixtime) +"_"+ filename
-
 		f.save(os.path.join(os.path.abspath(app.config['UPLOAD_FOLDER']+filename_disk)))
-
-		filesize_bytes = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], filename_disk)).st_size
-
+		
+		filesize_bytes = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], filename_disk)).st_siz
 
 		license = "MIT" # TODO
+
 		newdataset = Dataset(form.description.data, filename, filename_disk, filesize_bytes, license, user.uid)
 
 		db.session.add(newdataset)
@@ -167,7 +174,7 @@ def dataset():
 		flash("Oops... Something went wrong", "danger")
 		return render_template('dataset.html', form=form)
 
-	else:
+	elif request.method == 'GET':
 		return render_template('dataset.html', form=form)
 
 
@@ -181,7 +188,21 @@ def discover():
 
 @app.route("/share")
 def share():
-	return render_template('share.html')
+	#Check if user is signed in
+	if 'email' not in session:
+		flash("You must be signed in to upload a dataset.")
+		return redirect(url_for('signin'))
+		
+	user = User.query.filter_by(email = session['email']).first()
+
+	if user is None:
+		flash("You must be signed in to upload a dataset")
+		return redirect(url_for('signin'))
+
+	#if user is signed in...
+
+	ideas = Idea.query.filter_by(user_id=user.uid)
+	return render_template('share.html',ideas=ideas)
 
 @app.route("/about")
 def about():

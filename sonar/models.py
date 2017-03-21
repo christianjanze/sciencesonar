@@ -35,14 +35,16 @@ class Idea(db.Model):
 	title = db.Column(db.String(100))
 	description = db.Column(db.String(100))
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
-	#TODO: ADD FIELDS
-	#scientific_area = db.Column(db.String(100))
-	#scientific_subarea = db.Column(db.String(100))
+	scientific_area = db.Column(db.Integer)
+	scientific_subarea = db.Column(db.Integer)
 
-	def __init__(self, title, description, user_id):
+	def __init__(self, title, description, user_id, scientific_area_id, scientific_subarea_id):
+		self.description = description:
 		self.title = title
 		self.description = description
 		self.user_id = user_id
+		self.scientific_area_id = scientific_area_id
+		self.scientific_subarea_id = scientific_subarea_id
 
 class Dataset(db.Model):
 	__tablename__ = 'datasets'
@@ -54,14 +56,12 @@ class Dataset(db.Model):
 	filesize_bytes = db.Column(db.Float)
 	license = db.Column(db.String(200))
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
-	#TODO: ADD FIELDS
-	#scientific_area = db.Column(db.String(100))
-	#scientific_subarea = db.Column(db.String(100))
+	
 
 	def __init__(self, description, filename, filename_disk, filesize_bytes, license, user_id):
-		self.description = description
 		self.filename = filename
 		self.filename_disk = filename_disk
 		self.filesize_bytes = filesize_bytes
 		self.license = license
 		self.user_id = user_id
+	

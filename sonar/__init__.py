@@ -1,9 +1,6 @@
 from flask import Flask
 
-
 UPLOAD_FOLDER = 'uploads/'
-
-app = Flask(__name__)
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret_key_change_before" #os.urandom(24) # Set random secret key
