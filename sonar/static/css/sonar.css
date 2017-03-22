@@ -53,3 +53,9 @@ body {
   line-height: 1.428571429;
   border-radius: 15px;
 }
+
+.form-idea {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}

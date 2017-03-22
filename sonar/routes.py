@@ -2,11 +2,11 @@ from functools import wraps
 from sonar import app
 from flask import flash, render_template, request, url_for, redirect, session, g
 from sonar.forms import SignupForm, SigninForm, IdeaForm, DatasetForm
-from sonar.models import db, User, Idea, Dataset
-from sonar import login_manager
+from sonar.models import User, Idea, Dataset
+from sonar import login_manager, db
 from werkzeug.utils import secure_filename
 import os, calendar, datetime
-from flask_login import LoginManager, login_user , logout_user , current_user , login_required
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from werkzeug import generate_password_hash
 
 @login_manager.user_loader
@@ -89,8 +89,10 @@ def idea():
 	form = IdeaForm()
 
 	if request.method == 'POST' and form.validate():
+
 		
-		newidea = Idea(form.title.data, form.description.data, g.user.id, form.scientific_area.data, form.scientific_subarea.data)
+		
+		newidea = Idea(form.title.data, form.description.data, g.user.id, form.scientific_area.data)
 		db.session.add(newidea)
 		db.session.commit()
 		
@@ -105,7 +107,6 @@ def idea():
 		return render_template('idea.html', form=form)
 
 	elif request.method =='GET':
-
 		return render_template('idea.html', form=form)
 
 
@@ -122,7 +123,6 @@ def dataset():
 		d = datetime.datetime.utcnow()
 		unixtime = calendar.timegm(d.utctimetuple())
 
-		#
 		filename_disk = str(user.uid) + "_" + str(unixtime) +"_"+ filename
 		f.save(os.path.join(os.path.abspath(app.config['UPLOAD_FOLDER']+filename_disk)))
 		

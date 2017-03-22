@@ -1,10 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug import generate_password_hash, check_password_hash
 import datetime
-from flask_login import LoginManager
- 
-db = SQLAlchemy()
-login_manager = LoginManager()
+from sonar import db
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -46,23 +42,30 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User %r>' % (self.username)
 
+ideas_tags = db.Table('ideas_tags',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+    db.Column('idea_id', db.Integer, db.ForeignKey('ideas.id')),
+	db.PrimaryKeyConstraint('tag_id', 'idea_id'))
+
+class Tag(db.Model):
+	__tablename__ = 'tags'
+	id = db.Column(db.Integer, primary_key=True)
+	description = db.Column(db.String(100), unique=True)
+
 class Idea(db.Model):
 	__tablename__ = 'ideas'
-	iid = db.Column(db.Integer, primary_key = True)
+	id = db.Column(db.Integer, primary_key = True)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	title = db.Column(db.String(100))
 	description = db.Column(db.String(100))
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
-	scientific_area_id = db.Column(db.Integer)
-	scientific_subarea_id = db.Column(db.Integer)
+	tags=db.relationship('Tag', secondary=ideas_tags, backref='ideas' )  
 
-	def __init__(self, title, description, user_id, scientific_area_id, scientific_subarea_id):
+	def __init__(self, title, description, user_id):
 		self.description = description
 		self.title = title
 		self.description = description
 		self.user_id = user_id
-		self.scientific_area_id = scientific_area_id
-		self.scientific_subarea_id = scientific_subarea_id
 
 class Dataset(db.Model):
 	__tablename__ = 'datasets'

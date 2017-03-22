@@ -20,14 +20,19 @@
 	    </div>
 	</div>
 
+
+
 	<h1>Please Describe Your Idea</h1>
 	   <form action="{{ url_for('idea') }}" method=post>
 	    <dl>
 	      {{ form.hidden_tag() }}
 	      {{ render_field(form.title) }}
 	      {{ render_field(form.description) }}
+	      {{ render_field(form.tags)}}
 	    </dl>
 	    <p><input type=submit value=Save Idea>
 	 </form>
+
 </div> <!-- /container -->
+
 {% endblock %}
