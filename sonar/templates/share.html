@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container">
-	<h1>Share Research Opportunities</h1>
-	<a href="/idea" class="btn btn-primary">New Idea</a>
-	 {% for idea in ideas %}
-      <li>{{ idea.title }} {{ idea.description }}</li>
-    {% endfor %}
-</div>
+
+	<div class="jumbotron">
+      <div class="container">
+        <h1 class="display-3">Share Opportunities!</h1>
+        <p>You can either share a new research idea or a new dataset. Note that you can add datasets to research ideas. </p>
+        <p><a class="btn btn-primary btn-lg" href="/idea" role="button">Add New Research Idea »</a></p>
+      
+        <p><a class="btn btn-secondary btn-lg" href="/dataset" role="button">Add New Dataset »</a></p>
+      </div>
+    </div>
+
 
 {% endblock %}

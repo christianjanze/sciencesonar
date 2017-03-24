@@ -6,6 +6,8 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_wtf.file import FileField, FileRequired
 from sonar.models import User, Tag
 from sonar import db
+import re
+import sys #Tempß
 
 class SignupForm(Form):
 	firstname = StringField('First Name', [validators.Length(min=1, max=100)])
@@ -32,9 +34,6 @@ class SigninForm(Form):
 
 def tag_choices():      
 	return db.session.query(Tag).all()
-	#return db.session.query(Tag)
-	
-	#return Tag.query.with_entities(Tag.id, Tag.description).all()
 
 class Select2MultipleField(QuerySelectField):
 	def pre_validate(self, form):
@@ -42,19 +41,20 @@ class Select2MultipleField(QuerySelectField):
 		pass
 	def process_formdata(self, valuelist):
 		if valuelist:
-			self.data = ",".join(valuelist)
+			self.data = valuelist
 		else:
 			self.data = ""
 
 class IdeaForm(Form):
 	title = StringField('Title', [validators.Length(min=1, max=100)])
-	description = StringField('Description', [validators.Length(min=1, max=100)], widget=TextArea())
+	description = StringField('Description', [validators.Length(min=1, max=10000)], widget=TextArea())
 	tags = Select2MultipleField('Tags', 
 			query_factory=tag_choices,
 			get_label='description',
 			render_kw={"multiple": "multiple", "data-tags": "1"})
 
 class DatasetForm(Form):
+	title = StringField('Title', [validators.Length(min=1, max=100)])
 	description = StringField('Description', widget=TextArea())
 	dataset = FileField(validators=[FileRequired()])
 

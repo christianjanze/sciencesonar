@@ -11,8 +11,8 @@ class User(db.Model):
 	password = db.Column(db.String(54))
 	registered_on = db.Column(db.DateTime)
 
-	ideas = db.relationship('Idea', backref='User', lazy='dynamic')
-	datasets = db.relationship('Dataset', backref='User', lazy='dynamic')
+	ideas = db.relationship('Idea', backref='user', lazy='dynamic')
+	datasets = db.relationship('Dataset', backref='user', lazy='dynamic')
 
 	def __init__(self, firstname, lastname, username, password):
 		self.firstname = firstname.title()
@@ -57,32 +57,18 @@ class Idea(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	title = db.Column(db.String(100))
-	description = db.Column(db.String(100))
+	description = db.Column(db.String(10000))
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 	tags=db.relationship('Tag', secondary=ideas_tags, backref='ideas' )  
-
-	def __init__(self, title, description, user_id):
-		self.description = description
-		self.title = title
-		self.description = description
-		self.user_id = user_id
 
 class Dataset(db.Model):
 	__tablename__ = 'datasets'
 	did = db.Column(db.Integer, primary_key = True)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-	description = db.Column(db.String(2000))
+	title = db.Column(db.String(100))
+	description = db.Column(db.String(1000))
 	filename = db.Column(db.String(300))
 	filename_disk = db.Column(db.String(350))
 	filesize_bytes = db.Column(db.Float)
 	license = db.Column(db.String(200))
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
-	
-
-	def __init__(self, description, filename, filename_disk, filesize_bytes, license, user_id):
-		self.filename = filename
-		self.filename_disk = filename_disk
-		self.filesize_bytes = filesize_bytes
-		self.license = license
-		self.user_id = user_id
-	

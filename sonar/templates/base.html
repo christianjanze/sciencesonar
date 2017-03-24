@@ -76,7 +76,7 @@
     <!-- Render Content here -->
     {% block content %}{% endblock %}
 
-    <!-- Bootstrap core JavaScript
+    <!-- JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="static/vendor/js/jquery-slim.min.js"></script>
@@ -88,14 +88,24 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="static/vendor/js/ie10-viewport-bug-workaround.js"></script>
 
-
-     <script type="text/javascript">
+    <!-- Script for tagging field -->
+    <script type="text/javascript">
     $(document).ready(function() {
         // https://select2.github.io/examples.html
-        $("select").select2({});
-
-     
+          $("select").select2(        {  
+           maximumSelectionLength: 10, 
+           tags: true,
+           createTag: function (params) {
+              return {
+                id: 'newtag_'+params.term,
+                text: params.term + ' (new tag)',
+                newOption: true
+              }
+            }
+        });
     });
     </script>
+
   </body>
 </html>
+

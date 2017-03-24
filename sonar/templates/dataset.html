@@ -3,13 +3,13 @@
 {% from "_formhelpers.html" import render_field %}
 
 <div class="container">   
-  <h1>Add a new research idea</h1>
+ <h1 class="display-3">Add New Dataset</h1>
    <form action="{{ url_for('dataset') }}" method=post enctype="multipart/form-data">
     <dl>
       {{ form.hidden_tag() }}
+      {{ render_field(form.title) }}
       {{ render_field(form.description) }}
       {{ render_field(form.dataset) }}
-      {{ render_field(form.scientific_field)}}
     </dl>
     <p><input type=submit value=Upload>
   </form>

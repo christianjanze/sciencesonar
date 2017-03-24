@@ -2,7 +2,7 @@ from functools import wraps
 from sonar import app
 from flask import flash, render_template, request, url_for, redirect, session, g
 from sonar.forms import SignupForm, SigninForm, IdeaForm, DatasetForm
-from sonar.models import User, Idea, Dataset
+from sonar.models import User, Idea, Dataset, Tag
 from sonar import login_manager, db
 from werkzeug.utils import secure_filename
 import os, calendar, datetime
@@ -38,9 +38,8 @@ def signup():
 		newuser = User(form.firstname.data, form.lastname.data, form.username.data, form.password.data)
 		db.session.add(newuser)
 		db.session.commit()
-		
-		flash("Welcome! You've successfully created your ScienceSonar account.", "success")
 
+		flash("Welcome! You've successfully created your ScienceSonar account.", "success")
 		return redirect(url_for('signin'))
 
 	elif request.method == 'POST' and not form.validate(): 
@@ -53,8 +52,8 @@ def signup():
 @app.route('/profile')
 @login_required
 def profile():
+	##ideas = Idea.query.filter_by(user_id=g.user.id)
 	return render_template('profile.html')
-
 
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
@@ -69,7 +68,7 @@ def signin():
 	registered_user = User.query.filter_by(username = username).first()
 
 	if registered_user and registered_user.check_password(password):
-		login_user(registered_user)
+		login_user(registered_user, remember=True)
 		flash("Logged in successfully", "success")
 		return redirect(request.args.get('next') or url_for('profile'))
 	else:
@@ -90,19 +89,40 @@ def idea():
 
 	if request.method == 'POST' and form.validate():
 
-		
-		
-		newidea = Idea(form.title.data, form.description.data, g.user.id, form.scientific_area.data)
+		#Handle existing and new tags
+		# TODO: what happens if someone adds a new field with the same name at the same time before commit?
+		# TODO: --> Check whether new tags were already added in the meantime
+		tag_ids = [] #stores all ids (existing and newly created ones)
+		#Add new tags to tag table
+		for tag in form.tags.data:
+			#Handle new tags
+			if tag.startswith("newtag_"):
+				newtag = Tag(description=tag[7:])
+				db.session.add(newtag)
+				db.session.flush()
+				tag_ids.append(newtag.id)
+			#handle old tags
+			else:
+				tag_ids.append(tag)
+		db.session.commit()
+
+		newidea = Idea(title=form.title.data, description=form.description.data)
+
+		for tag_id in tag_ids:
+		 	tag = Tag.query.get(tag_id)
+		 	newidea.tags.append(tag)
+	
+		g.user.ideas.append(newidea)
+		db.session.add(g.user)
 		db.session.add(newidea)
 		db.session.commit()
-		
+
 		flash("Thank you for creating the new idea", "success")
 
 		return redirect(url_for('profile'))
 
 	elif request.method == 'POST' and not form.validate(): 
 
-		flash_errors(form) # TODO: REMOVE LINE IN PRODUCTION
 		flash("Oops... Something went wrong", "danger")
 		return render_template('idea.html', form=form)
 
@@ -123,15 +143,17 @@ def dataset():
 		d = datetime.datetime.utcnow()
 		unixtime = calendar.timegm(d.utctimetuple())
 
-		filename_disk = str(user.uid) + "_" + str(unixtime) +"_"+ filename
+		filename_disk = str(g.user.id) + "_" + str(unixtime) +"_"+ filename
 		f.save(os.path.join(os.path.abspath(app.config['UPLOAD_FOLDER']+filename_disk)))
 		
-		filesize_bytes = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], filename_disk)).st_siz
+		filesize_bytes = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], filename_disk)).st_size
 
 		license = "MIT" # TODO
 
-		newdataset = Dataset(form.description.data, filename, filename_disk, filesize_bytes, license, user.uid)
+		newdataset = Dataset(title=form.title.data, description=form.description.data, filename=filename, filename_disk=filename_disk, filesize_bytes=filesize_bytes, license=license)
+		g.user.datasets.append(newdataset)
 
+		db.session.add(g.user)
 		db.session.add(newdataset)
 		db.session.commit()
 		
@@ -151,8 +173,7 @@ def dataset():
 @app.route("/share")
 @login_required
 def share():
-	ideas = Idea.query.filter_by(user_id=g.user.id)
-	return render_template('share.html',ideas=ideas)
+	return render_template('share.html')
 
 @app.route("/")
 def index():
@@ -160,7 +181,8 @@ def index():
 
 @app.route("/discover")
 def discover():
-	return render_template('discover.html')
+	ideas = Idea.query.all()
+	return render_template('discover.html', ideas=ideas)
 
 @app.route("/about")
 def about():
