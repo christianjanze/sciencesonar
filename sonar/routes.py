@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 import os, calendar, datetime
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from werkzeug import generate_password_hash
+from sqlalchemy.orm import joinedload
 
 @login_manager.user_loader
 def load_user(id):
@@ -181,7 +182,14 @@ def index():
 
 @app.route("/discover")
 def discover():
-	ideas = Idea.query.all()
+	#ideas = db.session.query(Idea, User).join(User).all()
+	#ideas = db.session.query(Idea, User).join(Idea.user)
+	#tags = db.session.query(Idea, Tag).join(Idea.tags)
+
+	ideas = db.session.query(Idea).options(joinedload(Idea.user), joinedload(Idea.tags)).all()
+
+
+	
 	return render_template('discover.html', ideas=ideas)
 
 @app.route("/about")

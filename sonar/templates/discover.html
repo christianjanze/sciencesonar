@@ -5,7 +5,16 @@
 	<h1>Discover Research Opportunities</h1>
 	<p>Here, you can share ideas for potential research projects and/or descriptions of data sets
 	Title Description Name</p>
-	
+
+	{% for idea in ideas %}
+	  <strong>{{ idea.title }}</strong> <br> {{ idea.description|truncate(250)  }}   <br>
+	  	{% for tag in idea.tags %}
+	  		{{ tag.description }}
+		{% endfor %}
+		<br> On {{idea.created_date }} UTC  by {{idea.user.firstname}} {{idea.user.lastname}}
+		<br>----- <br>
+	{% endfor %}
+
 </div>
 
 {% endblock %}
