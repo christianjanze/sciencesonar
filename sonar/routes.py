@@ -105,6 +105,7 @@ def idea():
 			#handle old tags
 			else:
 				tag_ids.append(tag)
+
 		db.session.commit()
 
 		newidea = Idea(title=form.title.data, description=form.description.data)
@@ -189,9 +190,9 @@ def discover():
 	ideas = db.session.query(Idea).options(joinedload(Idea.user), joinedload(Idea.tags)).all()
 
 
-	
 	return render_template('discover.html', ideas=ideas)
 
 @app.route("/about")
 def about():
 	return render_template('about.html')
+	

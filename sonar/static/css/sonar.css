@@ -59,3 +59,8 @@ body {
   padding: 15px;
   margin: 0 auto;
 }
+
+.bottomline {
+  border-bottom: 1px solid #ccc;
+
+}

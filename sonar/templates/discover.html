@@ -2,18 +2,33 @@
 {% block content %}
 
 <div class="container">
-	<h1>Discover Research Opportunities</h1>
-	<p>Here, you can share ideas for potential research projects and/or descriptions of data sets
-	Title Description Name</p>
+	<div class="row">
+		<h1>Discover Research Opportunities</h1>
+		<p>Here, you can share ideas for potential research projects and/or descriptions of data sets</p>
+	</div>
 
-	{% for idea in ideas %}
-	  <strong>{{ idea.title }}</strong> <br> {{ idea.description|truncate(250)  }}   <br>
-	  	{% for tag in idea.tags %}
-	  		{{ tag.description }}
+
+	
+		{% for idea in ideas %}
+			<div class="row">
+				<h6><strong>{{idea.title}}</strong> | posted on {{idea.created_date }} UTC  by {{idea.user.firstname}} {{idea.user.lastname}}</h6>
+		     </div>
+
+		     <div class="row">
+	 			{{ idea.description|truncate(250)  }} 
+		     </div>
+
+		     <div class="row bottomline">
+		     	<p>
+		  		{% for tag in idea.tags %}
+		  		 <span class="badge badge-default">{{tag.description}}</span> {{" "}}
+		  		{% endfor %}
+		  		</p>
+		  	</div>
+
+		  	<br>
+
 		{% endfor %}
-		<br> On {{idea.created_date }} UTC  by {{idea.user.firstname}} {{idea.user.lastname}}
-		<br>----- <br>
-	{% endfor %}
 
 </div>
 
