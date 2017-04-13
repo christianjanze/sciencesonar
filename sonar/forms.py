@@ -4,7 +4,7 @@ from wtforms import BooleanField, StringField, PasswordField, validators, Valida
 from wtforms.widgets import TextArea
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_wtf.file import FileField, FileRequired
-from sonar.models import User, Tag
+from sonar.models import User, Tag, Scientificfield
 from sonar import db
 import re
 import sys #Tempß
@@ -35,6 +35,10 @@ class SigninForm(Form):
 def tag_choices():      
 	return db.session.query(Tag).all()
 
+def scientificfield_choices():      
+	#return db.session.query(Scientificfield).all()
+	return Scientificfield.query
+
 class Select2MultipleField(QuerySelectField):
 	def pre_validate(self, form):
 	 # Prevent "not a valid choice" error
@@ -47,7 +51,9 @@ class Select2MultipleField(QuerySelectField):
 
 class IdeaForm(Form):
 	title = StringField('Title', [validators.Length(min=1, max=100)])
+	question = StringField('Research Question', [validators.Length(min=1, max=100)])
 	description = StringField('Description', [validators.Length(min=1, max=10000)], widget=TextArea())
+	scientificfield = QuerySelectField('Scientific Field', query_factory=scientificfield_choices, get_label='description')
 	tags = Select2MultipleField('Tags', 
 			query_factory=tag_choices,
 			get_label='description',
@@ -57,5 +63,3 @@ class DatasetForm(Form):
 	title = StringField('Title', [validators.Length(min=1, max=100)])
 	description = StringField('Description', widget=TextArea())
 	dataset = FileField(validators=[FileRequired()])
-
-

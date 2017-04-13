@@ -2,9 +2,16 @@
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
 
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-3">Add New Dataset</h1>
+    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+  </div>
+</div>
+</br>
+
 <div class="container">   
- <h1 class="display-3">Add New Dataset</h1>
-   <form action="{{ url_for('dataset') }}" method=post enctype="multipart/form-data">
+   <form action="{{ url_for('dataset') }}" method=post enctype="multipart/form-data" >
     <dl>
       {{ form.hidden_tag() }}
       {{ render_field(form.title) }}

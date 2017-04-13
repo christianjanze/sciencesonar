@@ -2,13 +2,22 @@
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
 
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-3">Add New Idea</h1>
+    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+  </div>
+</div>
+</br>
+
  <div class="container">
-    <h1 class="display-3">Add New Research Idea</h1>
      <form action="{{ url_for('idea') }}" method=post>
     <dl>
       {{ form.hidden_tag() }}
       {{ render_field(form.title) }}
+        {{ render_field(form.question) }}
       {{ render_field(form.description) }}
+      {{ render_field(form.scientificfield) }}
       {{ render_field(form.tags)}}
     </dl>
     <p><input type=submit value=Save Idea>

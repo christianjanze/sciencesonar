@@ -1,4 +1,5 @@
 from flask import Flask
+#from flask_debugtoolbar import DebugToolbarExtension
 
 UPLOAD_FOLDER = 'uploads/'
 
@@ -7,6 +8,8 @@ app.config["SECRET_KEY"] = "secret_key_change_before" #os.urandom(24) # Set rand
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://sonar_user:sonar_password@localhost/development' 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+#toolbar = DebugToolbarExtension(app)
 
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()

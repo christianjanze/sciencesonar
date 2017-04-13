@@ -56,10 +56,20 @@ class Idea(db.Model):
 	__tablename__ = 'ideas'
 	id = db.Column(db.Integer, primary_key = True)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	scientificfield_id = db.Column(db.Integer, db.ForeignKey('scientificfields.id'))
 	title = db.Column(db.String(100))
+	question = db.Column(db.String(100))
+	is_featured = db.Column(db.String(3))
 	description = db.Column(db.String(10000))
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 	tags=db.relationship('Tag', secondary=ideas_tags, backref='ideas' )  
+
+
+class Scientificfield(db.Model):
+	__tablename__ = 'scientificfields'
+	id = db.Column(db.Integer, primary_key = True)
+	description = db.Column(db.String(200))
+	ideas = db.relationship('Idea', backref='scientificfield', lazy='dynamic')
 
 class Dataset(db.Model):
 	__tablename__ = 'datasets'

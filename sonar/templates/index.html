@@ -1,19 +1,48 @@
 {% extends "base.html" %}
 {% block content %}     
-    <div class="container">
+   
       <div class="sonar-landing-container">
+       
         <h1>Discover and Share Research Opportunities</h1>
-        <p class="lead">ScienceSonar allows you to easily find and share research opportunities.</p>
+        <p class="lead">ScienceSonar allows you to easily find and post research ideas and datasets</p>
           <p>
-          <a href="/discover" class="btn btn-primary">Discover Research Opportunities</a>
-          <a href="/share" class="btn btn-secondary">Share Research Opportunities</a>
+          <a href="/signup" class="btn btn-primary"><strong>Create an account</strong></a> or 
+          <a href="/discover" class="btn btn-secondary"><strong>Discover Opportunities</strong></a>
         </p>
       </div>
-    </div><!-- /.container -->
+  
+  </br>
+  </br>
 
     <div class="container">
-      <div class="sonar-landing-container">
-        <h2>Featured Opportunities</h2>
-      </div>
+     <h3>Featured
+      <small class="text-muted">Research Opportunities</small>
+    </h3>
+
+
+
+
+    <p class="lead">
+      Some examples of the research opportunities waiting for you on ScienceSonar
+    </p>
+        <div class="card-deck">
+        {% for idea in featured_ideas %}
+           <div class="card">
+            <img class="card-img-top" src="..." alt="Card image cap">
+            <div class="card-block">
+              <h5 class="card-title"> <a href="idea/{{idea.id}}">{{idea.title }}</a></h5>
+              <p class="card-text">{{idea.question}}</p>
+                <p> <span class="badge badge-primary">{{idea.scientificfield.description}}</span> 
+                {% for tag in idea.tags %}
+                <span class="badge badge-default">{{tag.description}}</span>
+                {% endfor %}</p>
+            </div>
+            <div class="card-footer">
+              <small class="text-muted">Last updated 3 mins ago</small>
+            </div>
+          </div>
+         {% endfor %}
+        </div>
+     
     </div><!-- /.container -->
 {% endblock %}

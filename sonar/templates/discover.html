@@ -1,35 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-3">Discover</h1>
+    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+  </div>
+</div>
+
+</br>
+
 <div class="container">
-	<div class="row">
-		<h1>Discover Research Opportunities</h1>
-		<p>Here, you can share ideas for potential research projects and/or descriptions of data sets</p>
-	</div>
+	 <h3>Recently
+      <small class="text-muted">Added Ideas</small>
+    </h3>
 
-
-	
 		{% for idea in ideas %}
 			<div class="row">
-				<h6><strong>{{idea.title}}</strong> | posted on {{idea.created_date }} UTC  by {{idea.user.firstname}} {{idea.user.lastname}}</h6>
+				<h5><a href="idea/{{idea.id}}"><strong>{{idea.title }}</strong></a></h5> <h6>{{idea.user.firstname}} {{idea.user.lastname}} posted on {{idea.created_date }} UTC </h6>
+			</div>
+		   
+		    <div class="row">
+	 			{{ idea.description|truncate(250) -}}<a href="idea/{{idea.id}}">Read More</a>
 		     </div>
 
-		     <div class="row">
-	 			{{ idea.description|truncate(250)  }} 
-		     </div>
-
-		     <div class="row bottomline">
+			<div class="row bottomline">
 		     	<p>
-		  		{% for tag in idea.tags %}
+		  		 <span class="badge badge-primary">{{idea.scientificfield.description}}</span> 
+		  		 {% for tag in idea.tags %}
 		  		 <span class="badge badge-default">{{tag.description}}</span> {{" "}}
-		  		{% endfor %}
+		  		{% endfor %}		
 		  		</p>
 		  	</div>
-
+ 
 		  	<br>
-
 		{% endfor %}
-
 </div>
 
 {% endblock %}

@@ -29,7 +29,7 @@ def flash_errors(form):
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():	
-	if user is not None:
+	if g.user.is_authenticated:
 		flash("You are already logged in. Please sign out before creating a new account.","danger")
 		return redirect(url_for('profile'))
 
@@ -108,12 +108,14 @@ def idea():
 
 		db.session.commit()
 
-		newidea = Idea(title=form.title.data, description=form.description.data)
+
+		newidea = Idea(title=form.title.data, question=form.question.data, description=form.description.data, scientificfield_id=form.scientificfield.data.id)
 
 		for tag_id in tag_ids:
 		 	tag = Tag.query.get(tag_id)
 		 	newidea.tags.append(tag)
-	
+
+
 		g.user.ideas.append(newidea)
 		db.session.add(g.user)
 		db.session.add(newidea)
@@ -126,10 +128,10 @@ def idea():
 	elif request.method == 'POST' and not form.validate(): 
 
 		flash("Oops... Something went wrong", "danger")
-		return render_template('idea.html', form=form)
+		return render_template('idea_new.html', form=form)
 
 	elif request.method =='GET':
-		return render_template('idea.html', form=form)
+		return render_template('idea_new.html', form=form)
 
 
 @app.route('/dataset', methods=['GET', 'POST'])
@@ -179,20 +181,29 @@ def share():
 
 @app.route("/")
 def index():
-	return render_template('index.html')
+	featured_ideas = db.session.query(Idea).filter(Idea.is_featured=="yes").options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.scientificfield)).limit(3)
+	return render_template('index.html',featured_ideas=featured_ideas)
 
 @app.route("/discover")
 def discover():
-	#ideas = db.session.query(Idea, User).join(User).all()
-	#ideas = db.session.query(Idea, User).join(Idea.user)
-	#tags = db.session.query(Idea, Tag).join(Idea.tags)
-
-	ideas = db.session.query(Idea).options(joinedload(Idea.user), joinedload(Idea.tags)).all()
-
-
+	ideas = db.session.query(Idea).options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.scientificfield)).all()
 	return render_template('discover.html', ideas=ideas)
 
 @app.route("/about")
 def about():
 	return render_template('about.html')
 	
+
+@app.route('/idea/<int:idea_id>', methods=['GET'])
+def show_idea(idea_id):
+	#idea=Idea.query.get(variable)
+	idea = db.session.query(Idea).filter(Idea.id==idea_id).options(joinedload(Idea.user), joinedload(Idea.tags)).first()
+	if idea:
+		return render_template("idea_show.html",idea=idea)
+	else:
+		flash("Oops... Something went wrong", "danger")
+		return redirect("/")
+
+@app.errorhandler(404)
+def not_found_error(error):
+	return render_template('404.html'), 404
