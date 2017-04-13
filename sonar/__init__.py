@@ -1,5 +1,4 @@
 from flask import Flask
-#from flask_debugtoolbar import DebugToolbarExtension
 
 UPLOAD_FOLDER = 'uploads/'
 
@@ -9,7 +8,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://sonar_user:sonar_passwo
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-#toolbar = DebugToolbarExtension(app)
 
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()

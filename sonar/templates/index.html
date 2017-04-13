@@ -1,25 +1,68 @@
 {% extends "base.html" %}
-{% block content %}     
-   
-      <div class="sonar-landing-container">
-       
-        <h1>Discover and Share Research Opportunities</h1>
-        <p class="lead">ScienceSonar allows you to easily find and post research ideas and datasets</p>
-          <p>
-          <a href="/signup" class="btn btn-primary"><strong>Create an account</strong></a> or 
-          <a href="/discover" class="btn btn-secondary"><strong>Discover Opportunities</strong></a>
-        </p>
-      </div>
-  
-  </br>
-  </br>
+{% block content %}   
 
-    <div class="container">
+<div class="sonar-landing-container">
+
+  <h1 class="display-4"><strong>Discover and Share </br> Research Opportunities</strong></h1>
+  <p class="lead">Find and post research ideas and datasets</p>
+
+</br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm"></div>
+      <div class="col-sm"><a href="/signup" class="btn btn-primary btn-block"><strong>Create an account</strong></a> </div>
+      <div class="text-center">or</div>
+      <div class="col-sm"><a href="/discover" class="btn btn-secondary btn-block"><strong>Discover Opportunities</strong></a></div>
+      <div class="col-sm"></div>
+    </div>
+  </div><!-- container end -->
+</div><!--end sonar-landing-container -->
+  
+
+<div class="container">
+    <div class="stat">
+      <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="milestone-counter">
+                    <i class="fa fa-users fa-3x"></i>
+                    <span class="stat-count highlight">{{n_users}}</span>
+                    <div class="milestone-details">Researchers</div>
+                </div>
+            </div>
+             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="milestone-counter">
+                    <i class="fa fa-university fa-3x"></i>
+                    <span class="stat-count highlight">{{n_institutions}}</span>
+                    <div class="milestone-details">Academic Institutions</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="milestone-counter">
+                    <i class="fa fa-lightbulb-o fa-3x"></i>
+                    <span class="stat-count highlight">{{n_ideas}}</span>
+                    <div class="milestone-details">Research Ideas</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="milestone-counter">
+                    <i class="fa fa-database fa-3x"></i>
+                    <span class="stat-count highlight">{{n_datasets}}</span>
+                    <div class="milestone-details">Cool Datasets</div>
+                </div>
+            </div>
+         
+          </div>
+    </div><!-- stat -->
+</div><!-- container end -->
+  
+
+  </br>
+  </br>
+<div class="container">
      <h3>Featured
       <small class="text-muted">Research Opportunities</small>
     </h3>
-
-
 
 
     <p class="lead">
@@ -45,4 +88,23 @@
         </div>
      
     </div><!-- /.container -->
+
+</br>
+
+<div class="jumbotron jumbotron-fluid">
+  <div class="container sonar-landing-footer">
+      <p class="lead">Join ScienceSonar and advance human knowledge</p>
+      <div class="container">
+        <div class="row">
+          <div class="col-sm"></div>
+          <div class="col-sm"><a href="/signup" class="btn btn-primary btn-block"><strong>Create an account</strong></a> </div>
+          <div class="text-center">or</div>
+          <div class="col-sm"><a href="/discover" class="btn btn-secondary btn-block"><strong>Discover Opportunities</strong></a></div>
+          <div class="col-sm"></div>
+        </div>
+      </div><!-- container end -->
+  </div>
+</div>
+
+
 {% endblock %}

@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-3">Idea</h1>
+    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+  </div>
+</div>
+</br>
+
+
 <div class="container">
-    <h2>Idea</h2>
     	<div class="row">
 				<h6><strong>{{idea.title}}</strong> | posted on {{idea.created_date }} UTC  by {{idea.user.firstname}} {{idea.user.lastname}}</h6>
 		</div>

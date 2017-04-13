@@ -181,8 +181,14 @@ def share():
 
 @app.route("/")
 def index():
+	n_users = User.query.count()
+	n_ideas= Idea.query.count()
+	n_datasets = Dataset.query.count()
+	#n_institutions # TODO: once possible to enter workplace, count number
+	n_institutions = 2
+
 	featured_ideas = db.session.query(Idea).filter(Idea.is_featured=="yes").options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.scientificfield)).limit(3)
-	return render_template('index.html',featured_ideas=featured_ideas)
+	return render_template('index.html',featured_ideas=featured_ideas,n_users=n_users,n_ideas=n_ideas,n_datasets=n_datasets,n_institutions=n_institutions)
 
 @app.route("/discover")
 def discover():
@@ -195,6 +201,7 @@ def about():
 	
 
 @app.route('/idea/<int:idea_id>', methods=['GET'])
+@login_required
 def show_idea(idea_id):
 	#idea=Idea.query.get(variable)
 	idea = db.session.query(Idea).filter(Idea.id==idea_id).options(joinedload(Idea.user), joinedload(Idea.tags)).first()

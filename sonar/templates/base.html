@@ -9,55 +9,17 @@
 
     <title>ScienceSonar</title>
 
-    <!-- Bootstrap core CSS -->
+    <!-- Vendor CSS -->
     <link href="/static/vendor/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/vendor/css/bootstrap-select.min.css" rel="stylesheet">
     <link href="/static/vendor/css/select2.min.css" rel="stylesheet">
+    <link href="/static/vendor/css/font-awesome.min.css" rel="stylesheet">
 
-    <!-- Custom style -->
+    <!-- Sonar CSS -->
     <link href="/static/css/sonar.css" rel="stylesheet">
   </head>
   <body>
   
-
-   <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
-    <div class="container">
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <a class="navbar-brand" href="/">ScienceSonar</a>
-
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item {% if request.path == "/discover" %}active{% endif %}">
-            <a class="nav-link" href="/discover">Discover</a>
-          </li>
-          <li class="nav-item {% if request.path == "/share" %}active{% endif %}">
-            <a class="nav-link" href="/share">Share</a>
-          </li>
-         
-
-      {% if g.user.is_authenticated %}
-       <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Your Account</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a>
-              <a class="dropdown-item" href="{{ url_for('signout') }}">Signout</a>
-            </div>
-         </li>         
-      {% else %}
-          <li><a class="nav-link" href="{{ url_for('signin') }}">Sign In</a></li>
-      {% endif %}
-      
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-      </div>
-     <div >
-    </nav>
-
     <!-- Render Flash Messages -->
     <div class="container">
       {% with messages = get_flashed_messages(with_categories=true) %}
@@ -73,12 +35,56 @@
     </div>
     <!-- End Flash Messages -->
 
-    <!-- Render Content here -->
-    {% block content %}{% endblock %}
+   <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
+    <div class="container">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="/">ScienceSonar</a>
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+ 
+       <div class="col-lg-3">
+          <div class="input-group">
+            <input type="text" class="form-control search_nav" placeholder="Search for...">
+            <span class="input-group-btn">
+              <button class="btn btn-secondary search_nav" type="button"><i class="fa fa-search fa-1"></i></button>
+            </span>
+          </div>
+        </div>
+
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item {% if request.path == "/discover" %}active{% endif %}">
+            <a class="nav-link" href="/discover">Discover</a>
+          </li>
+          <li class="nav-item {% if request.path == "/share" %}active{% endif %}">
+            <a class="nav-link" href="/share">Share</a>
+          </li>
+      </ul>
+
+      <ul class="navbar-nav navbar-right">
+      {% if g.user.is_authenticated %}
+       <li class="nav-item dropdown justify-content-end">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user fa-1"></i> {{g.user.firstname}}</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a>
+              <a class="dropdown-item" href="{{ url_for('signout') }}">Signout</a>
+            </div>
+         </li>         
+      {% else %}
+          <li><a class="nav-link" href="{{ url_for('signin') }}">Sign In</a></li>
+          <li> <form action="{{ url_for('signup') }}"> <button class="btn btn-primary navbar-btn">Register</button> </form></li>
+      {% endif %}
+        </ul>  
+      </div>
+     <div >
+    </nav>
+
+     <!-- Render Content here -->
+    {% block content %}{% endblock %}  
 
     <footer class="footer">
       <div class="container">
-        ScienceSonar - Made with <span class="glyphicon glyphicon-love"></span> in the European Union
+        ScienceSonar - Made with <i class="fa fa-heart fa-1"></i> in the European Union
             <a class="nav-link" href="/about">About</a>
       </div>
     </footer>
@@ -112,6 +118,27 @@
         });
     });
     </script>
+
+     <script type="text/javascript">
+    (function($) {
+        "use strict";
+        function count($this){
+        var current = parseInt($this.html(), 10);
+        current = current + 1; /* Where 50 is increment */    
+        $this.html(++current);
+            if(current > $this.data('count')){
+                $this.html($this.data('count'));
+            } else {    
+                setTimeout(function(){count($this)}, 50);
+            }
+        }            
+        $(".stat-count").each(function() {
+          $(this).data('count', parseInt($(this).html(), 10));
+          $(this).html('0');
+          count($(this));
+        });
+   })(jQuery);
+   </script>
 
   </body>
 </html>
