@@ -3,14 +3,60 @@
 
 <div class="jumbotron jumbotron-fluid">
   <div class="container">
-    <h1 class="display-3">Your Profile</h1>
+    <h1 class="display-3">{{ g.user.firstname }}'s Profile</h1>
     <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+
+        	<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#home" role="tab">Home</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#profile" role="tab">Your Ideas</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#messages" role="tab">Your Datasets</a>
+  </li>
+</ul>
+
   </div>
 </div>
-</br>
 
 
 <div class="container">
-    <h3>This is {{ g.user.username }}'s profile page<h3>
+   
+<!-- Tab panes -->
+<div class="tab-content">
+  <div class="tab-pane active" id="home" role="tabpanel">...</div>
+  <div class="tab-pane" id="profile" role="tabpanel">
+  	{% for idea in g.user.ideas %}
+			<div class="row">
+				<h5><a href="idea/{{idea.id}}"><strong>{{idea.title }}</strong></a></h5> <h6>{{idea.user.firstname}} {{idea.user.lastname}} posted on {{idea.created_date }} UTC </h6>
+			</div>
+		   
+		    <div class="row">
+	 			{{ idea.description|truncate(250) -}}<a href="idea/{{idea.id}}">Read More</a>
+		     </div>
+
+			<div class="row bottomline">
+		     	<p>
+		  		 <span class="badge badge-primary">{{idea.scientificfield.description}}</span> 
+		  		 {% for tag in idea.tags %}
+		  		 <span class="badge badge-default">{{tag.description}}</span> {{" "}}
+		  		{% endfor %}		
+		  		</p>
+		  	</div>
+ 
+		  	<br>
+		{% endfor %}
+  </div>
+  <div class="tab-pane" id="messages" role="tabpanel">...</div>
+  <div class="tab-pane" id="settings" role="tabpanel">...</div>
 </div>
+</div>
+
+
+	
+
+
 {% endblock %}

@@ -35,8 +35,7 @@ class SigninForm(Form):
 def tag_choices():      
 	return db.session.query(Tag).all()
 
-def scientificfield_choices():      
-	#return db.session.query(Scientificfield).all()
+def scientificfield_choices():
 	return Scientificfield.query
 
 class Select2MultipleField(QuerySelectField):

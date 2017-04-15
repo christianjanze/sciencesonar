@@ -2,12 +2,11 @@
 {% block content %}   
 
 <div class="sonar-landing-container">
-
   <h1 class="display-4"><strong>Discover and Share </br> Research Opportunities</strong></h1>
-  <p class="lead">Find and post research ideas and datasets</p>
+  <h4 class="display-5">Find and post research ideas and datasets</h4>
 
+  </br>
 </br>
-
   <div class="container">
     <div class="row">
       <div class="col-sm"></div>
@@ -23,21 +22,7 @@
 <div class="container">
     <div class="stat">
       <div class="row">
-            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div class="milestone-counter">
-                    <i class="fa fa-users fa-3x"></i>
-                    <span class="stat-count highlight">{{n_users}}</span>
-                    <div class="milestone-details">Researchers</div>
-                </div>
-            </div>
-             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div class="milestone-counter">
-                    <i class="fa fa-university fa-3x"></i>
-                    <span class="stat-count highlight">{{n_institutions}}</span>
-                    <div class="milestone-details">Academic Institutions</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+           <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="milestone-counter">
                     <i class="fa fa-lightbulb-o fa-3x"></i>
                     <span class="stat-count highlight">{{n_ideas}}</span>
@@ -51,6 +36,22 @@
                     <div class="milestone-details">Cool Datasets</div>
                 </div>
             </div>
+
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="milestone-counter">
+                    <i class="fa fa-users fa-3x"></i>
+                    <span class="stat-count highlight">{{n_users}}</span>
+                    <div class="milestone-details">Researchers</div>
+                </div>
+            </div>
+             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="milestone-counter">
+                    <i class="fa fa-university fa-3x"></i>
+                    <span class="stat-count highlight">{{n_institutions}}</span>
+                    <div class="milestone-details">TB Free Diskspace</div>
+                </div>
+            </div>
+           
          
           </div>
     </div><!-- stat -->

@@ -89,7 +89,6 @@ def idea():
 	form = IdeaForm()
 
 	if request.method == 'POST' and form.validate():
-
 		#Handle existing and new tags
 		# TODO: what happens if someone adds a new field with the same name at the same time before commit?
 		# TODO: --> Check whether new tags were already added in the meantime
@@ -114,7 +113,6 @@ def idea():
 		for tag_id in tag_ids:
 		 	tag = Tag.query.get(tag_id)
 		 	newidea.tags.append(tag)
-
 
 		g.user.ideas.append(newidea)
 		db.session.add(g.user)
@@ -210,6 +208,35 @@ def show_idea(idea_id):
 	else:
 		flash("Oops... Something went wrong", "danger")
 		return redirect("/")
+
+
+@app.route('/idea/<int:idea_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_idea(idea_id):
+	#Checks if idea with id exists and whether it belong to the user
+	idea=db.session.query(Idea).filter(Idea.user_id==g.user.id, Idea.id==idea_id).options(joinedload(Idea.tags)).first()
+		
+	if idea:
+		form=IdeaForm(obj=idea)
+		return render_template("idea_edit.html", form=form)
+	else:
+		return "something went wrong"
+
+	#User.query.filter_by(username=form.username.data).first()
+	#flash(idea)
+
+	#Check if idea logged_in user belongs to user:
+	# if:
+
+
+	# if idea:
+	# 	return render_template("idea_show.html",idea=idea)
+	# else:
+	# 	flash("Oops... Something went wrong", "danger")
+	# 	return redirect("/")
+
+
+
 
 @app.errorhandler(404)
 def not_found_error(error):

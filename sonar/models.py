@@ -64,7 +64,6 @@ class Idea(db.Model):
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 	tags=db.relationship('Tag', secondary=ideas_tags, backref='ideas' )  
 
-
 class Scientificfield(db.Model):
 	__tablename__ = 'scientificfields'
 	id = db.Column(db.Integer, primary_key = True)
