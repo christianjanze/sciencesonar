@@ -9,6 +9,7 @@ import os, calendar, datetime
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from werkzeug import generate_password_hash
 from sqlalchemy.orm import joinedload
+import sys
 
 @login_manager.user_loader
 def load_user(id):
@@ -100,23 +101,17 @@ def idea():
 			if tag.startswith("newtag_"):
 				newtag = Tag(description=tag[7:])
 				db.session.add(newtag)
-				db.session.flush()
+				db.session.commit()
 				tag_ids.append(newtag.id)
 			#handle old tags
 			else:
 				tag_ids.append(tag)
 
-		db.session.commit()
-
-
-		newidea = Idea(title=form.title.data, question=form.question.data, description=form.description.data, scientificfield_id=form.scientificfield.data.id)
-
+		newidea = Idea(user_id=g.user.id, title=form.title.data, question=form.question.data, description=form.description.data, scientificfield_id=form.scientificfield.data.id)
 		for tag_id in tag_ids:
 		 	tag = Tag.query.get(tag_id)
 		 	newidea.tags.append(tag)
 
-		g.user.ideas.append(newidea)
-		db.session.add(g.user)
 		db.session.add(newidea)
 		db.session.commit()
 
@@ -211,27 +206,36 @@ def show_idea(idea_id):
 		return redirect("/")
 
 
-
-import pprint
-
 @app.route('/idea/<int:idea_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_idea(idea_id):
 	#Checks if idea with id exists and whether it belong to the user
 	idea=db.session.query(Idea).filter(Idea.user_id==g.user.id, Idea.id==idea_id).first()
 		
-	# for tag in idea.tags:
-	# 	flash(tag.description)
-
 	if idea:
-		form=IdeaForm(obj=idea, tags=idea)
+		if request.method == 'GET':
+			form=IdeaForm(obj=idea)
+			return render_template("idea_edit.html", form=form)
 
-		pprint(form)
+		elif request.method == 'POST' and form.validate():
+
+			return render_template
+		# #orm.tags.data=1
+		# #form.process()
+	
+		# #orm.tags.default=['1','2']
+		# #orm.processdata()
+
+		# for tag in idea.tags:
+		# 	print(dir(tag), file=sys.stderr)
+
+		#form.tags.process(request.form)
+		#form.tags.process_data =[1,2,3]
+		#form.process()
 
 
-		return render_template("idea_edit.html", form=form)
 	else:
-		return "something went wrong"
+		return render_template('404.html'), 404
 
 	#User.query.filter_by(username=form.username.data).first()
 	#flash(idea)

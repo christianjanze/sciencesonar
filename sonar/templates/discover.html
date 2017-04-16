@@ -17,7 +17,7 @@
 
 		{% for idea in ideas %}
 			<div class="row">
-				<h5><a href="idea/{{idea.id}}"><strong>{{idea.title }}</strong></a></h5> <h6>{{idea.user.firstname}} {{idea.user.lastname}} posted on {{idea.created_date }} UTC </h6>
+				<h5><a href="idea/{{idea.id}}"><strong>{{idea.title }}</strong></a></h5> <h6>{{idea.user.firstname}} {{idea.user.lastname}} posted on {{idea.created_date }} UTC </h6>  {% if idea.user_id== g.user.id %}<a href="/idea/{{idea.id}}/edit">Edit</a> {%endif%}
 			</div>
 		   
 		    <div class="row">
