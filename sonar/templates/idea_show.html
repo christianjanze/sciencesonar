@@ -12,10 +12,11 @@
 
 <div class="container">
     	<div class="row">
-				<h6><strong>{{idea.title}}</strong> | posted on {{idea.created_date }} UTC  by {{idea.user.firstname}} {{idea.user.lastname}}</h6>
+				<h6><strong>{{idea.title}}</strong> | posted on {{idea.created_date }} UTC  by {{idea.user.firstname}} {{idea.user.lastname}} {% if idea.user_id== g.user.id %}<a href="/idea/{{idea.id}}/edit">Edit Idea</a> {% endif %}</h6>
 		</div>
 		<div class="row">
-	 			{{ idea.description }} 
+	 			{{ idea.description }}  
+	 			
 		</div>
 		<div class="row bottomline">
 				<p> <span class="badge badge-primary">{{idea.scientificfield.description}}</span> 

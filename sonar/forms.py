@@ -33,20 +33,20 @@ class SigninForm(Form):
 	
 
 def tag_choices():      
-	return db.session.query(Tag).all()
+	return Tag.query # db.session.query(Tag).all()
 
 def scientificfield_choices():
 	return Scientificfield.query
 
 class Select2MultipleField(QuerySelectField):
-	def pre_validate(self, form):
-	 # Prevent "not a valid choice" error
-		pass
-	def process_formdata(self, valuelist):
-		if valuelist:
-			self.data = valuelist
-		else:
-			self.data = ""
+ 	def pre_validate(self, form):
+ 	 # Prevent "not a valid choice" error
+ 		pass
+ 	def process_formdata(self, valuelist):
+ 		if valuelist:
+ 			self.data = valuelist
+ 		else:
+ 			self.data = ""
 
 class IdeaForm(Form):
 	title = StringField('Title', [validators.Length(min=1, max=100)])
