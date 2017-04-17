@@ -15,6 +15,10 @@
 				<h6><strong>{{idea.title}}</strong> | posted on {{idea.created_date }} UTC  by {{idea.user.firstname}} {{idea.user.lastname}} {% if idea.user_id== g.user.id %}<a href="/idea/{{idea.id}}/edit">Edit Idea</a> {% endif %}</h6>
 		</div>
 		<div class="row">
+	 			{{ idea.question }}  
+	 			
+		</div>
+		<div class="row">
 	 			{{ idea.description }}  
 	 			
 		</div>
@@ -29,8 +33,5 @@
 			<h2>Related Ideas on ScienceSonar</h2>
 		</div>
  </div>
-
-
-
 
 {% endblock %}

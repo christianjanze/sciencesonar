@@ -19,6 +19,10 @@ def load_user(id):
 def before_request():
 	g.user = current_user
 
+@app.errorhandler(404)
+def not_found_error(error):
+	return render_template('404.html'), 404
+
 # Auxiliary function to generate flash messages from errors in forms
 def flash_errors(form):
 	for field, errors in form.errors.items():
@@ -83,50 +87,6 @@ def signout():
 	logout_user()
 	flash("See you! Successfully logged out.","success")
 	return redirect(url_for('index')) 
-
-@app.route('/idea', methods=['GET', 'POST'])
-@login_required
-def idea():
-	form = IdeaForm()
-
-	if request.method == 'POST' and form.validate():
-		#Handle existing and new tags
-		# TODO: what happens if someone adds a new field with the same name at the same time before commit?
-		# TODO: --> Check whether new tags were already added in the meantime
-		# TODO: lowercase everything
-		tag_ids = [] #stores all ids (existing and newly created ones)
-		#Add new tags to tag table
-		for tag in form.tags.data:
-			#Handle new tags
-			if tag.startswith("newtag_"):
-				newtag = Tag(description=tag[7:])
-				db.session.add(newtag)
-				db.session.commit()
-				tag_ids.append(newtag.id)
-			#handle old tags
-			else:
-				tag_ids.append(tag)
-
-		newidea = Idea(user_id=g.user.id, title=form.title.data, question=form.question.data, description=form.description.data, scientificfield_id=form.scientificfield.data.id)
-		for tag_id in tag_ids:
-		 	tag = Tag.query.get(tag_id)
-		 	newidea.tags.append(tag)
-
-		db.session.add(newidea)
-		db.session.commit()
-
-		flash("Thank you for creating the new idea", "success")
-
-		return redirect(url_for('profile'))
-
-	elif request.method == 'POST' and not form.validate(): 
-
-		flash("Oops... Something went wrong", "danger")
-		return render_template('idea_new.html', form=form)
-
-	elif request.method =='GET':
-		return render_template('idea_new.html', form=form)
-
 
 @app.route('/dataset', methods=['GET', 'POST'])
 @login_required
@@ -194,6 +154,50 @@ def about():
 	return render_template('about.html')
 	
 
+@app.route('/idea', methods=['GET', 'POST'])
+@login_required
+def idea():
+	form = IdeaForm()
+
+	if request.method == 'POST' and form.validate():
+		#Handle existing and new tags
+		# TODO: what happens if someone adds a new field with the same name at the same time before commit?
+		# TODO: --> Check whether new tags were already added in the meantime
+		# TODO: lowercase everything
+		tag_ids = [] #stores all ids (existing and newly created ones)
+		#Add new tags to tag table
+		for tag in form.tags.data:
+			#Handle new tags
+			if tag.startswith("newtag_"):
+				newtag = Tag(description=tag[7:])
+				db.session.add(newtag)
+				db.session.commit()
+				tag_ids.append(newtag.id)
+			#handle old tags
+			else:
+				tag_ids.append(tag)
+
+		newidea = Idea(user_id=g.user.id, title=form.title.data, question=form.question.data, description=form.description.data, scientificfield_id=form.scientificfield.data.id)
+		for tag_id in tag_ids:
+		 	tag = Tag.query.get(tag_id)
+		 	newidea.tags.append(tag)
+
+		db.session.add(newidea)
+		db.session.commit()
+
+		flash("Thank you for creating the new idea", "success")
+
+		return redirect(url_for('profile'))
+
+	elif request.method == 'POST' and not form.validate(): 
+
+		flash("Oops... Something went wrong", "danger")
+		return render_template('idea_new.html', form=form)
+
+	elif request.method =='GET':
+		return render_template('idea_new.html', form=form)
+
+
 @app.route('/idea/<int:idea_id>', methods=['GET'])
 @login_required
 def show_idea(idea_id):
@@ -209,46 +213,45 @@ def show_idea(idea_id):
 @app.route('/idea/<int:idea_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_idea(idea_id):
-	#Checks if idea with id exists and whether it belong to the user
-	idea=db.session.query(Idea).filter(Idea.user_id==g.user.id, Idea.id==idea_id).first()
-		
+	#Checks if idea exists and whether it belongs to the user
+	idea= Idea.query.filter(Idea.user_id==g.user.id, Idea.id==idea_id).first()
 	if idea:
-		if request.method == 'GET':
-			form=IdeaForm(obj=idea)
-			return render_template("idea_edit.html", form=form)
+		form=IdeaForm(obj=idea)
+		if request.method=="POST" and form.validate():
+			
+			tag_ids = [] 
+			for tag in form.tags.data:
+				#Handle new tags
+				if tag.startswith("newtag_"):
+					newtag = Tag(description=tag[7:])
+					db.session.add(newtag)
+					db.session.commit()
+					tag_ids.append(newtag.id)
+				#handle old tags
+				else:
+					tag_ids.append(tag)
 
-		elif request.method == 'POST' and form.validate():
+			idea.tags=[] #remove existing tags
+			for tag_id in tag_ids:
+				tag = Tag.query.get(tag_id)
+				idea.tags.append(tag)
 
-			return render_template
-		# #orm.tags.data=1
-		# #form.process()
-	
-		# #orm.tags.default=['1','2']
-		# #orm.processdata()
+			for tag in idea.tags:
+				print(tag, file=sys.stderr)
 
-		# for tag in idea.tags:
-		# 	print(dir(tag), file=sys.stderr)
+			idea.title=form.title.data
+			idea.question=form.question.data
+			idea.description=form.description.data
+			idea.scientificfield_id=form.scientificfield.data.id
+			idea.updated_date = datetime.datetime.utcnow()
 
-		#form.tags.process(request.form)
-		#form.tags.process_data =[1,2,3]
-		#form.process()
+			db.session.add(idea)
+			db.session.commit()
 
+			flash("Successfully updated idea!", "success")
 
+			return redirect(url_for('show_idea',idea_id=idea.id)) # go somewhere
+
+		return render_template("idea_edit.html", form=form)
 	else:
 		return render_template('404.html'), 404
-
-	#User.query.filter_by(username=form.username.data).first()
-	#flash(idea)
-
-	#Check if idea logged_in user belongs to user:
-	# if:
-
-	# if idea:
-	# 	return render_template("idea_show.html",idea=idea)
-	# else:
-	# 	flash("Oops... Something went wrong", "danger")
-	# 	return redirect("/")
-
-@app.errorhandler(404)
-def not_found_error(error):
-	return render_template('404.html'), 404

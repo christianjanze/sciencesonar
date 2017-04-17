@@ -7,8 +7,6 @@ from flask_wtf.file import FileField, FileRequired
 from sonar.models import User, Tag, Scientificfield
 from sonar import db
 
-
-
 class SignupForm(Form):
 	firstname = StringField('First Name', [validators.Length(min=1, max=100)])
 	lastname = StringField('Last Name', [validators.Length(min=1, max=100)])

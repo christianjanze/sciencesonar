@@ -17,23 +17,34 @@
 
 		{% for idea in ideas %}
 			<div class="row">
-				<h5><a href="idea/{{idea.id}}"><strong>{{idea.title }}</strong></a></h5> <h6>{{idea.user.firstname}} {{idea.user.lastname}} posted on {{idea.created_date }} UTC </h6>  {% if idea.user_id== g.user.id %}<a href="/idea/{{idea.id}}/edit">Edit</a> {%endif%}
+				<h5><a href="idea/{{idea.id}}"><strong>{{idea.title }}</strong></a></h5> <h6>{{ idea.user.firstname}} {{idea.user.lastname}} posted on {{idea.created_date }} UTC </h6> 
+				 {% if idea.updated_date != null %}Last Update on {{ idea.updated_date}} {%endif%}
 			</div>
+
+			<div class="row">
+	 			{{ idea.question }}  
+		</div>
 		   
 		    <div class="row">
 	 			{{ idea.description|truncate(250) -}}<a href="idea/{{idea.id}}">Read More</a>
 		     </div>
 
-			<div class="row bottomline">
+			<div class="row">
 		     	<p>
 		  		 <span class="badge badge-primary">{{idea.scientificfield.description}}</span> 
 		  		 {% for tag in idea.tags %}
-		  		 <span class="badge badge-default">{{tag.description}}</span> {{" "}}
+		  		 <span class="badge badge-default">{{tag.description}}</span> 
 		  		{% endfor %}		
 		  		</p>
+
+		  	</div>
+
+		  	<div class="row bottomline">
+		  		 {% if idea.user_id== g.user.id %}<a href="/idea/{{idea.id}}/edit">Edit</a> {%endif%}
 		  	</div>
  
 		  	<br>
+
 		{% endfor %}
 </div>
 

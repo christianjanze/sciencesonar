@@ -61,7 +61,8 @@ class Idea(db.Model):
 	question = db.Column(db.String(100))
 	is_featured = db.Column(db.String(3))
 	description = db.Column(db.String(10000))
-	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+	updated_date = db.Column(db.DateTime)
 	tags=db.relationship('Tag', secondary=ideas_tags, backref='ideas' )  
 
 class Scientificfield(db.Model):
