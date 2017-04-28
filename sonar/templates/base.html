@@ -18,6 +18,9 @@
 
     <!-- Sonar CSS -->
     <link href="/static/css/sonar.css" rel="stylesheet">
+
+    {{ moment.include_jquery() }}
+    {{ moment.include_moment() }}
   </head>
   <body>
   
@@ -41,7 +44,7 @@
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="/">ScienceSonar</a>
+      <a class="navbar-brand" href="/"><i class="fa fa-compass" aria-hidden="true"></i> ScienceSonar</a>
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
  
        <div class="col-lg-3">

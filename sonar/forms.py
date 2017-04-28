@@ -29,7 +29,6 @@ class SigninForm(Form):
 	username = StringField("Username",  [validators.Required("Please enter your username"), validators.Email("Please enter your yousername.")])
 	password = PasswordField('Password', [validators.Required("Please enter a password.")])
 	
-
 def scientificfield_choices():
 	return Scientificfield.query
 

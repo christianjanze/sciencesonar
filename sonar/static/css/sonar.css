@@ -82,5 +82,38 @@ body {
 }
 
 .btn-primary {
-    background-color: #292929;
-    
+    background-color: #292929;    
+}
+
+.card-img-left {
+
+  float: left;
+  padding-right: 1em;
+  margin-bottom: -1.25em;
+}
+
+.extraClass {
+    position: relative;
+}
+
+.extraClass ul {
+    position: absolute;
+   margin-top: -74px;
+   border: none;
+}
+
+.extraClass li {
+
+    text-decoration: none; /* Add this */
+
+  }
+
+.extraClass a {
+
+  color: #fff;
+}
+
+.jumbotron {
+  background-color: #363636;
+  color: #e6e6e6;
+}

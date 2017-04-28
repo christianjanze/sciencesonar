@@ -2,7 +2,6 @@
 {% block content %}   
 
 <div class="sonar-landing-container">
- 
   <h1 class="display-4"><strong>Discover and Share </br> Research Opportunities</strong></h1>
   <h4 class="display-5">Find and post research ideas and datasets</h4>
 
@@ -11,7 +10,7 @@
   <div class="container">
     <div class="row">
       <div class="col-sm"></div>
-      <div class="col-sm"><a href="/signup" class="btn btn-primary btn-block"><strong>Create an account</strong></a> </div>
+      <div class="col-sm"><a href="/signup" class="btn btn-primary btn-block"><strong>Create an account »</strong></a> </div>
       <div class="text-center">or</div>
       <div class="col-sm"><a href="/discover" class="btn btn-secondary btn-block"><strong>Discover Opportunities</strong></a></div>
       <div class="col-sm"></div>
@@ -66,14 +65,13 @@
       <small class="text-muted">Research Opportunities</small>
     </h3>
 
-
     <p class="lead">
       Some examples of the research opportunities waiting for you on ScienceSonar
     </p>
         <div class="card-deck">
         {% for idea in featured_ideas %}
            <div class="card">
-            <img class="card-img-top" src="..." alt="Card image cap">
+            <img class="card-img-top" src="http://placehold.it/200x200" alt="Idea Image">
             <div class="card-block">
               <h5 class="card-title"> <a href="idea/{{idea.id}}">{{idea.title }}</a></h5>
               <p class="card-text">{{idea.question}}</p>

@@ -47,6 +47,11 @@ ideas_tags = db.Table('ideas_tags',
     db.Column('idea_id', db.Integer, db.ForeignKey('ideas.id')),
 	db.PrimaryKeyConstraint('tag_id', 'idea_id'))
 
+ideas_datasets = db.Table('ideas_datasets',
+    db.Column('idea_id', db.Integer, db.ForeignKey('ideas.id')),
+    db.Column('dataset_id', db.Integer, db.ForeignKey('datasets.id')),
+	db.PrimaryKeyConstraint('idea_id', 'dataset_id'))
+
 class Tag(db.Model):
 	__tablename__ = 'tags'
 	id = db.Column(db.Integer, primary_key=True)
@@ -64,6 +69,7 @@ class Idea(db.Model):
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 	updated_date = db.Column(db.DateTime)
 	tags=db.relationship('Tag', secondary=ideas_tags, backref='ideas' )  
+	datasets=db.relationship('Dataset', secondary=ideas_datasets, backref='ideas' )  
 
 class Scientificfield(db.Model):
 	__tablename__ = 'scientificfields'
@@ -73,7 +79,7 @@ class Scientificfield(db.Model):
 
 class Dataset(db.Model):
 	__tablename__ = 'datasets'
-	did = db.Column(db.Integer, primary_key = True)
+	id = db.Column(db.Integer, primary_key = True)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	title = db.Column(db.String(100))
 	description = db.Column(db.String(1000))

@@ -20,5 +20,9 @@ login_manager.login_view = 'signin'
 login_manager.login_message = "Please sign in to access this page."
 login_manager.login_message_category = "warning"
 
+from flask_moment import Moment
+moment = Moment(app)
+
+
 import sonar.routes
 

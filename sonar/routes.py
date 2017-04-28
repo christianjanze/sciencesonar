@@ -10,6 +10,7 @@ from flask_login import LoginManager, login_user, logout_user, current_user, log
 from werkzeug import generate_password_hash
 from sqlalchemy.orm import joinedload
 import sys
+import datetime
 
 @login_manager.user_loader
 def load_user(id):
@@ -27,7 +28,7 @@ def not_found_error(error):
 def flash_errors(form):
 	for field, errors in form.errors.items():
 		for error in errors:
-			flash(u"Error in the %s field - %s" % (
+			flash("Error in the %s field - %s" % (
 				getattr(form, field).label.text,
 				error
 			))
@@ -88,7 +89,7 @@ def signout():
 	flash("See you! Successfully logged out.","success")
 	return redirect(url_for('index')) 
 
-@app.route('/dataset', methods=['GET', 'POST'])
+@app.route('/dataset/new', methods=['GET', 'POST'])
 @login_required
 def dataset():
 	form = DatasetForm()
@@ -97,7 +98,7 @@ def dataset():
 		f = form.dataset.data
 		filename = secure_filename(f.filename)
 
-		#Calc UNIX UTC timestanmp
+		#UNIX UTC timestanmp
 		d = datetime.datetime.utcnow()
 		unixtime = calendar.timegm(d.utctimetuple())
 
@@ -146,20 +147,27 @@ def index():
 
 @app.route("/discover")
 def discover():
+	n_ideas= Idea.query.count()
+	n_datasets = Dataset.query.count()
+	now = datetime.datetime.utcnow()
+
 	ideas = db.session.query(Idea).options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.scientificfield)).all()
-	return render_template('discover.html', ideas=ideas)
+	return render_template('discover.html', ideas=ideas, n_ideas=n_ideas, n_datasets=n_datasets,now=now)
 
 @app.route("/about")
 def about():
 	return render_template('about.html')
 	
 
-@app.route('/idea', methods=['GET', 'POST'])
+@app.route('/idea/new', methods=['GET', 'POST'])
 @login_required
 def idea():
 	form = IdeaForm()
 
 	if request.method == 'POST' and form.validate():
+
+		#TODO:
+		#refactor part below (appears 1x above)
 		#Handle existing and new tags
 		# TODO: what happens if someone adds a new field with the same name at the same time before commit?
 		# TODO: --> Check whether new tags were already added in the meantime
@@ -202,13 +210,25 @@ def idea():
 @login_required
 def show_idea(idea_id):
 	#idea=Idea.query.get(variable)
-	idea = db.session.query(Idea).filter(Idea.id==idea_id).options(joinedload(Idea.user), joinedload(Idea.tags)).first()
+	now = datetime.datetime.utcnow()
+	idea = db.session.query(Idea).filter(Idea.id==idea_id).options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.datasets)).first()
 	if idea:
-		return render_template("idea_show.html",idea=idea)
+		return render_template("idea_show.html",idea=idea,now=now)
 	else:
 		flash("Oops... Something went wrong", "danger")
 		return redirect("/")
 
+@app.route('/idea/<int:idea_id>/delete', methods=['GET'])
+@login_required
+def delete_idea(idea_id):
+	idea = Idea.query.filter(Idea.user_id==g.user.id, Idea.id==idea_id).first()
+	if idea:
+		db.session.delete(idea)
+		db.session.commit()
+		flash("Successfully deleted idea", "success")
+		return redirect("/")
+	else:
+		return render_template('404.html'), 404
 
 @app.route('/idea/<int:idea_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -219,6 +239,8 @@ def edit_idea(idea_id):
 		form=IdeaForm(obj=idea)
 		if request.method=="POST" and form.validate():
 			
+			#TODO:
+			#refactor part below (appears 1x above)
 			tag_ids = [] 
 			for tag in form.tags.data:
 				#Handle new tags
