@@ -2,7 +2,7 @@ from functools import wraps
 from sonar import app
 from flask import flash, render_template, request, url_for, redirect, session, g
 from sonar.forms import SignupForm, SigninForm, IdeaForm, DatasetForm
-from sonar.models import User, Idea, Dataset, Tag
+from sonar.models import User, Idea, Dataset, Tag, Idea_Vote
 from sonar import login_manager, db
 from werkzeug.utils import secure_filename
 import os, calendar, datetime
@@ -230,6 +230,7 @@ def delete_idea(idea_id):
 	else:
 		return render_template('404.html'), 404
 
+
 @app.route('/idea/<int:idea_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_idea(idea_id):
@@ -277,3 +278,32 @@ def edit_idea(idea_id):
 		return render_template("idea_edit.html", form=form)
 	else:
 		return render_template('404.html'), 404
+
+
+@app.route('/idea/<int:idea_id>/upvote', methods=['GET'])
+@login_required
+def upvote_idea(idea_id):
+	#Check if idea belongs to user
+	idea = Idea.query.filter(Idea.id==idea_id).first()
+	if idea.user_id==g.user.id:
+		flash("You cannot vote on your own idea", "danger")
+		return redirect("/")
+
+	#Check if user has already voted for the idea:
+	vote= Idea_Vote.query.filter(Idea_Vote.user_id==g.user.id, Idea_Vote.idea_id==idea_id).first()
+
+	#Check if vote exists and is not 1:
+	if vote and vote.vote is not 1:
+		vote.vote=1
+		db.session.add(vote)
+		db.session.commit()
+		flash("Idea upvoted", "success")
+		return redirect("/")
+	elif vote and vote.vote is 1:
+		return redirect("/")
+	else:
+		new_vote = Idea_Vote(user_id=g.user.id, idea_id=idea_id, vote=int(1))
+		db.session.add(new_vote)
+		db.session.commit()
+		flash("Idea upvoted", "success")
+		return redirect("/")

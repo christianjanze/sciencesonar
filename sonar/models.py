@@ -13,6 +13,8 @@ class User(db.Model):
 
 	ideas = db.relationship('Idea', backref='user', lazy='dynamic')
 	datasets = db.relationship('Dataset', backref='user', lazy='dynamic')
+	votes = db.relationship('Idea_Vote', backref='user', lazy='dynamic')
+
 
 	def __init__(self, firstname, lastname, username, password):
 		self.firstname = firstname.title()
@@ -43,13 +45,13 @@ class User(db.Model):
 		return '<User %r>' % (self.username)
 
 ideas_tags = db.Table('ideas_tags',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-    db.Column('idea_id', db.Integer, db.ForeignKey('ideas.id')),
+	db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+	db.Column('idea_id', db.Integer, db.ForeignKey('ideas.id')),
 	db.PrimaryKeyConstraint('tag_id', 'idea_id'))
 
 ideas_datasets = db.Table('ideas_datasets',
-    db.Column('idea_id', db.Integer, db.ForeignKey('ideas.id')),
-    db.Column('dataset_id', db.Integer, db.ForeignKey('datasets.id')),
+	db.Column('idea_id', db.Integer, db.ForeignKey('ideas.id')),
+	db.Column('dataset_id', db.Integer, db.ForeignKey('datasets.id')),
 	db.PrimaryKeyConstraint('idea_id', 'dataset_id'))
 
 class Tag(db.Model):
@@ -70,6 +72,7 @@ class Idea(db.Model):
 	updated_date = db.Column(db.DateTime)
 	tags=db.relationship('Tag', secondary=ideas_tags, backref='ideas' )  
 	datasets=db.relationship('Dataset', secondary=ideas_datasets, backref='ideas' )  
+	votes = db.relationship('Idea_Vote', backref='idea', lazy='dynamic')
 
 class Scientificfield(db.Model):
 	__tablename__ = 'scientificfields'
@@ -87,4 +90,14 @@ class Dataset(db.Model):
 	filename_disk = db.Column(db.String(350))
 	filesize_bytes = db.Column(db.Float)
 	license = db.Column(db.String(200))
-	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+class Idea_Vote(db.Model):
+	__tablename__ = 'idea_vote'
+	id = db.Column(db.Integer, primary_key = True)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	idea_id = db.Column(db.Integer, db.ForeignKey('ideas.id'))
+	
+	vote = db.column(db.Integer)
+	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+	updated_date = db.Column(db.DateTime)
