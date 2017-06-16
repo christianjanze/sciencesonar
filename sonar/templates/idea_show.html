@@ -2,80 +2,77 @@
 {% block content %}
 
 <div class="jumbotron jumbotron-fluid">
-  <div class="container">
-
-
-  	<div class="media">
-  <img class="d-flex mr-3" src="/static/img/field_biology.png" alt="Generic placeholder image">
-  <div class="media-body">
-  		<small class="text-muted">{{ idea.user.firstname}} {{idea.user.lastname}} | 
-	  					{% if idea.updated_date %} 
-						Updated  {{ moment(idea.updated_date).fromTime(now) }}
-						{% else %}
-						Posted {{ moment(idea.created_date).fromTime(now) }}
-						{% endif %} 
-						<span class="pull-right">{% if idea.user_id== g.user.id %}<a href="/idea/{{idea.id}}/edit">Edit Idea</a> {% endif %}</span>
-		</small>
-    <h2 class="mt-0">{{idea.title}}</h2>
- <h6> {{ idea.question }}</h6>
-
-  </div>
-</div>
-
-  
-  </div>
+	<div class="container">
+		<div class="media">
+			<img class="d-flex mr-3" src="/static/img/field_biology.png" alt="Generic placeholder image">
+			<div class="media-body">
+				<small class="text-muted">{{ idea.user.firstname}} {{idea.user.lastname}} | 
+					{% if idea.updated_date %} 
+					Updated  {{ moment(idea.updated_date).fromTime(now) }}
+					{% else %}
+					Posted {{ moment(idea.created_date).fromTime(now) }}
+					{% endif %} 
+					<span class="pull-right">{% if idea.user_id== g.user.id %}<a href="/idea/{{idea.id}}/edit">Edit Idea</a> {% endif %}</span>
+				</small>
+				<h2 class="mt-0">{{idea.title}}</h2>
+				<h6> {{ idea.question }}</h6>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Nav tabs -->
 <div class="container">
 	<div class="extraClass">
-	          <ul class="nav nav-tabs" role="tablist">
-	            <li class="nav-item">
-	              <a class="nav-link active" data-toggle="tab" href="#description" role="ideas">Idea Description</a>
-	            </li>
-	            <li class="nav-item">
-	              <a class="nav-link" data-toggle="tab" href="#associated_datasets" role="datasets">Associated Datasets</a>
-	            </li>
-	          </ul>
+		<ul class="nav nav-tabs" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" data-toggle="tab" href="#description" role="ideas">Idea Description</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" href="#associated_datasets" role="datasets">Associated Datasets</a>
+			</li>
+		</ul>
 	</div>
 </div>
 <!-- End nav tabs -->
 
 <div class="tab-content">
-  <div class="tab-pane active" id="description" role="tabpanel"> 
-	<div class="container">
-		<div class="row">
-	    	{{ idea.description }}  
-		</div>	
-
-		<div class="row bottomline">
-				 <p> <span class="badge badge-primary">{{idea.scientificfield.description}}</span> 
-					{% for tag in idea.tags %}
-						 <span class="badge badge-default">{{tag.description}}</span>
-					{% endfor %}</p>	
-		</div>
-		</br>
+	<div class="tab-pane active" id="description" role="tabpanel"> 
 		<div class="container">
-			  <h3>Similiar Ideas
-		      <small class="text-muted">on ScienceSonar</small>
-		    </h3>
+			<div class="row">
+				{{ idea.description }}  
+			</div>	
 
-		    <p class="lead">
-		    You may also like
-		    </p>
+			<div class="row bottomline">
+				<p> <span class="badge badge-primary">{{idea.scientificfield.description}}</span> 
+					{% for tag in idea.tags %}
+					<span class="badge badge-default">{{tag.description}}</span>
+					{% endfor %}
+				</p>	
+			</div>
+		</br>
+		
+		<div class="container">
+			<h3>Similiar Ideas
+				<small class="text-muted">on ScienceSonar</small>
+			</h3>
+
+			<p class="lead">
+				You may also like
+			</p>
 		</div>
 	</div> <!--end description container -->
-  </div> <!-- end tab pane -->
+</div> <!-- end tab pane -->
 
-  <div class="tab-pane" id="associated_datasets" role="tabpanel">
+<div class="tab-pane" id="associated_datasets" role="tabpanel">
 	<div class="container">
 
-  		{% for dataset in idea.datasets %}
-				<h1>{{dataset.id}}	{{dataset.description}} </h1>
+		{% for dataset in idea.datasets %}
+		<h1>{{dataset.id}}	{{dataset.description}} </h1>
 		{% endfor %}</p>	
 
-  	</div> <!--end associated datasets container -->
-  </div> <!-- end tab pane -->
+	</div> <!--end associated datasets container -->
+</div> <!-- end tab pane -->
 </div> <!-- end tab content  -->
 
 

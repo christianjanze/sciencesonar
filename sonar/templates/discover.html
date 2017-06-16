@@ -2,95 +2,102 @@
 {% block content %}
 
 <div class="jumbotron jumbotron-fluid">
-  <div class="container">
-    <h1 class="display-3"> Discover</h1>
-    <p class="lead">ScienceSonar members contribute the coolest research ideas and datasets on earth. Please snoop around below. </p>
-  </div>
+	<div class="container">
+		<h1 class="display-3"> Discover</h1>
+		<p class="lead">ScienceSonar members contribute the coolest research ideas and datasets on earth. Please snoop around below. </p>
+	</div>
 </div>
 
 <!-- Nav tabs -->
 <div class="container">
 	<div class="extraClass">
-	          <ul class="nav nav-tabs" role="tablist">
-	            <li class="nav-item">
-	              <a class="nav-link active" data-toggle="tab" href="#ideas" role="ideas">Ideas <span class="badge badge-primary">{{n_ideas}}</span> </a>
-	            </li>
-	            <li class="nav-item">
-	              <a class="nav-link" data-toggle="tab" href="#datasets" role="datasets">Datasets <span class="badge badge-primary">{{n_datasets}}</span></a>
-	            </li>
-	          </ul>
+		<ul class="nav nav-tabs" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" data-toggle="tab" href="#ideas" role="ideas">Ideas <span class="badge badge-primary">{{n_ideas}}</span> </a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" href="#datasets" role="datasets">Datasets <span class="badge badge-primary">{{n_datasets}}</span></a>
+			</li>
+		</ul>
 	</div>
 </div>
 <!-- End nav tabs -->
 
 <div class="tab-content">
-  <div class="tab-pane active" id="ideas" role="tabpanel"> 
-	<div class="container">
-		{% for idea in ideas %}
-		<div class="row">
-			<div class="col-1">
-				<i class="fa fa-chevron-up fa-2x" aria-hidden="true"></i></br>
-				<strong>12</strong></br>
-				<i class="fa fa-chevron-down fa-2x" aria-hidden="true"></i></br>
-			</div>
-			<div class="col-11">
-				<div class="card">
-				  <div class="card-block">
-				  	<img class="card-img-left" src="http://placehold.it/200x200" alt="Idea Image">
+	<div class="tab-pane active" id="ideas" role="tabpanel"> 
+		<div class="container">
+			{% for idea in ideas %}
+			<div class="row">
+				<div class="col-1">
+					<a href="idea/{{idea.id}}/upvote"><i class="fa fa-chevron-up fa-2x" aria-hidden="true"></i></a></br>
+					<strong>{% for vote in idea.votes %}
+								{% if vote.vote %} 
+									 {{vote.vote}}
+								{% else %}
+									0
+								{% endif %} 
+							{% endfor %}
+							{{idea.total_votes}}
+					</strong></br>
+					<a href="idea/{{idea.id}}/downvote"><i class="fa fa-chevron-down fa-2x" aria-hidden="true"></i></a></br>
+				</div>
+				<div class="col-11">
+					<div class="card">
+						<div class="card-block">
+							<img class="card-img-left" src="http://placehold.it/200x200" alt="Idea Image">
 
-	  				<small class="text-muted">{{ idea.user.firstname}} {{idea.user.lastname}} | 
-	  					{% if idea.updated_date %} 
-						Updated  {{ moment(idea.updated_date).fromTime(now) }}
-						{% else %}
-						Posted {{ moment(idea.created_date).fromTime(now) }}
-						{% endif %} 
-					</small>
-	  				
-	  				{% if idea.user_id== g.user.id %}
-	  				<span class="pull-right">
-			  			<div class="btn-group ml-2">
-					      <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-					      <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					        <span class="sr-only">Edit</span>
-					      </button>
-					      <div class="dropdown-menu">
-					        <a class="dropdown-item" href="/idea/{{idea.id}}/edit">Edit Idea</a>
-					        <div class="dropdown-divider"></div>
-					        <a class="dropdown-item" href="#">Delete Idea</a>
-					      </div>
-					    </div>
-					</span>
-	 				 {% endif %}  
+							<small class="text-muted">{{ idea.user.firstname}} {{idea.user.lastname}} | 
+								{% if idea.updated_date %} 
+								Updated  {{ moment(idea.updated_date).fromTime(now) }}
+								{% else %}
+								Posted {{ moment(idea.created_date).fromTime(now) }}
+								{% endif %} 
+							</small>
 
-				    <h4 class="card-title"><a href="idea/{{idea.id}}">{% if idea.is_featured=="yes" %}<span class="badge badge-info">Featured</span> {% endif %} {{idea.title}}</a>
+							{% if idea.user_id== g.user.id %}
+							<span class="pull-right">
+								<div class="btn-group ml-2">
+									<button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+									<button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="sr-only">Edit</span>
+									</button>
+									<div class="dropdown-menu">
+										<a class="dropdown-item" href="/idea/{{idea.id}}/edit">Edit Idea</a>
+										<div class="dropdown-divider"></div>
+										<a class="dropdown-item" href="#">Delete Idea</a>
+									</div>
+								</div>
+							</span>
+							{% endif %}  
 
-				    </h4>
-				    <h6 class="card-subtitle mb-2 text-muted">{{ idea.question }}</h6>
-				    <p class="card-text"><div class="text-muted">{{ idea.description|truncate(250) }}</div></a></p>
+							<h4 class="card-title"><a href="idea/{{idea.id}}">{% if idea.is_featured=="yes" %}<span class="badge badge-info">Featured</span> {% endif %} {{idea.title}}</a>
 
-					<div>
-				   		<span class="badge badge-primary">{{ idea.scientificfield.description }}</span>
-				   		{% for tag in idea.tags %}
-						<span class="badge badge-default">{{ tag.description }}</span>
-						{% endfor %}
+							</h4>
+							<h6 class="card-subtitle mb-2 text-muted">{{ idea.question }}</h6>
+							<p class="card-text"><div class="text-muted">{{ idea.description|truncate(250) }}</div></a></p>
+
+							<div>
+								<span class="badge badge-primary">{{ idea.scientificfield.description }}</span>
+								{% for tag in idea.tags %}
+								<span class="badge badge-default">{{ tag.description }}</span>
+								{% endfor %}
+							</div>
+							<a href="#" class="card-link"><small class="text-muted"><i class="fa fa-comment-o" aria-hidden="true"></i> Comment</small></a>
+							<a href="#" class="card-link"><small class="text-muted"><i class="fa fa-share" aria-hidden="true"></i> Share</small></a>
+
+						</div>
 					</div>
-				    <a href="#" class="card-link"><small class="text-muted"><i class="fa fa-comment-o" aria-hidden="true"></i> Comment</small></a>
-				    <a href="#" class="card-link"><small class="text-muted"><i class="fa fa-share" aria-hidden="true"></i> Share</small></a>
-				  
-				  </div>
 				</div>
 			</div>
-		</div>
-
-	</br>
+		</br>
 		{% endfor %}
 	</div> <!--end ideas container -->
-  </div> <!-- end tab pane -->
+</div> <!-- end tab pane -->
 
-  <div class="tab-pane" id="datasets" role="tabpanel">
+<div class="tab-pane" id="datasets" role="tabpanel">
 	<div class="container">
-  		datasets
-  	</div> <!--end datasets container -->
-  </div> <!-- end tab pane -->
+		datasets
+	</div> <!--end datasets container -->
+</div> <!-- end tab pane -->
 </div> <!-- end tab content  -->
 {% endblock %}

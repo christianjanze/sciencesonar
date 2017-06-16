@@ -8,6 +8,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://sonar_user:sonar_passwo
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+app.config['SQLALCHEMY_ECHO'] = True #remove line in production
 
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
@@ -25,4 +26,3 @@ moment = Moment(app)
 
 
 import sonar.routes
-

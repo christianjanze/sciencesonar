@@ -9,6 +9,7 @@ import os, calendar, datetime
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from werkzeug import generate_password_hash
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 import sys
 import datetime
 
@@ -106,7 +107,6 @@ def dataset():
 		f.save(os.path.join(os.path.abspath(app.config['UPLOAD_FOLDER']+filename_disk)))
 		
 		filesize_bytes = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], filename_disk)).st_size
-
 		license = "MIT" # TODO
 
 		newdataset = Dataset(title=form.title.data, description=form.description.data, filename=filename, filename_disk=filename_disk, filesize_bytes=filesize_bytes, license=license)
@@ -128,7 +128,6 @@ def dataset():
 	elif request.method == 'GET':
 		return render_template('dataset.html', form=form)
 
-
 @app.route("/share")
 @login_required
 def share():
@@ -145,27 +144,26 @@ def index():
 	featured_ideas = db.session.query(Idea).filter(Idea.is_featured=="yes").options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.scientificfield)).limit(3)
 	return render_template('index.html',featured_ideas=featured_ideas,n_users=n_users,n_ideas=n_ideas,n_datasets=n_datasets,n_institutions=n_institutions)
 
+
 @app.route("/discover")
 def discover():
 	n_ideas= Idea.query.count()
 	n_datasets = Dataset.query.count()
 	now = datetime.datetime.utcnow()
+	ideas = db.session.query(Idea).options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.scientificfield), joinedload(Idea.votes)).all()
 
-	ideas = db.session.query(Idea).options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.scientificfield)).all()
 	return render_template('discover.html', ideas=ideas, n_ideas=n_ideas, n_datasets=n_datasets,now=now)
 
 @app.route("/about")
 def about():
 	return render_template('about.html')
 	
-
 @app.route('/idea/new', methods=['GET', 'POST'])
 @login_required
 def idea():
 	form = IdeaForm()
 
 	if request.method == 'POST' and form.validate():
-
 		#TODO:
 		#refactor part below (appears 1x above)
 		#Handle existing and new tags
@@ -194,17 +192,14 @@ def idea():
 		db.session.commit()
 
 		flash("Thank you for creating the new idea", "success")
-
 		return redirect(url_for('profile'))
 
 	elif request.method == 'POST' and not form.validate(): 
-
 		flash("Oops... Something went wrong", "danger")
 		return render_template('idea_new.html', form=form)
 
 	elif request.method =='GET':
 		return render_template('idea_new.html', form=form)
-
 
 @app.route('/idea/<int:idea_id>', methods=['GET'])
 @login_required
@@ -212,6 +207,7 @@ def show_idea(idea_id):
 	#idea=Idea.query.get(variable)
 	now = datetime.datetime.utcnow()
 	idea = db.session.query(Idea).filter(Idea.id==idea_id).options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.datasets)).first()
+
 	if idea:
 		return render_template("idea_show.html",idea=idea,now=now)
 	else:
@@ -229,7 +225,6 @@ def delete_idea(idea_id):
 		return redirect("/")
 	else:
 		return render_template('404.html'), 404
-
 
 @app.route('/idea/<int:idea_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -267,7 +262,6 @@ def edit_idea(idea_id):
 			idea.description=form.description.data
 			idea.scientificfield_id=form.scientificfield.data.id
 			idea.updated_date = datetime.datetime.utcnow()
-
 			db.session.add(idea)
 			db.session.commit()
 
@@ -280,7 +274,7 @@ def edit_idea(idea_id):
 		return render_template('404.html'), 404
 
 
-@app.route('/idea/<int:idea_id>/upvote', methods=['GET'])
+@app.route('/idea/<int:idea_id>/upvote')
 @login_required
 def upvote_idea(idea_id):
 	#Check if idea belongs to user
@@ -295,15 +289,53 @@ def upvote_idea(idea_id):
 	#Check if vote exists and is not 1:
 	if vote and vote.vote is not 1:
 		vote.vote=1
+		vote.updated_date=created_date=datetime.datetime.utcnow()
 		db.session.add(vote)
 		db.session.commit()
-		flash("Idea upvoted", "success")
-		return redirect("/")
+		flash("Idea upvoted!", "success")
+		return request.referrer
 	elif vote and vote.vote is 1:
+		vote.vote=0
+		vote.updated_date=created_date=datetime.datetime.utcnow()
+		db.session.add(vote)
+		db.session.commit()
 		return redirect("/")
 	else:
-		new_vote = Idea_Vote(user_id=g.user.id, idea_id=idea_id, vote=int(1))
+		new_vote = Idea_Vote(user_id=g.user.id, idea_id=idea_id, vote=1)
 		db.session.add(new_vote)
 		db.session.commit()
 		flash("Idea upvoted", "success")
+		return redirect("/")
+
+@app.route('/idea/<int:idea_id>/downvote')
+@login_required
+def downvote_idea(idea_id):
+	#Check if idea belongs to user
+	idea = Idea.query.filter(Idea.id==idea_id).first()
+	if idea.user_id==g.user.id:
+		flash("You cannot vote on your own idea", "danger")
+		return redirect("/")
+
+	#Check if user has already voted for the idea:
+	vote= Idea_Vote.query.filter(Idea_Vote.user_id==g.user.id, Idea_Vote.idea_id==idea_id).first()
+
+	#Check if vote exists and is not -1:
+	if vote and vote.vote is not -1:
+		vote.vote=-0
+		vote.updated_date=created_date=datetime.datetime.utcnow()
+		db.session.add(vote)
+		db.session.commit()
+		flash("Idea downvoted!", "success")
+		return request.referrer
+	elif vote and vote.vote is -1:
+		vote.vote=0
+		vote.updated_date=created_date=datetime.datetime.utcnow()
+		db.session.add(vote)
+		db.session.commit()
+		return redirect("/")
+	else:
+		new_vote = Idea_Vote(user_id=g.user.id, idea_id=idea_id, vote=1)
+		db.session.add(new_vote)
+		db.session.commit()
+		flash("Idea downvoted", "success")
 		return redirect("/")

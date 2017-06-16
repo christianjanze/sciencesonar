@@ -13,8 +13,7 @@ class User(db.Model):
 
 	ideas = db.relationship('Idea', backref='user', lazy='dynamic')
 	datasets = db.relationship('Dataset', backref='user', lazy='dynamic')
-	votes = db.relationship('Idea_Vote', backref='user', lazy='dynamic')
-
+	
 
 	def __init__(self, firstname, lastname, username, password):
 		self.firstname = firstname.title()
@@ -72,7 +71,17 @@ class Idea(db.Model):
 	updated_date = db.Column(db.DateTime)
 	tags=db.relationship('Tag', secondary=ideas_tags, backref='ideas' )  
 	datasets=db.relationship('Dataset', secondary=ideas_datasets, backref='ideas' )  
-	votes = db.relationship('Idea_Vote', backref='idea', lazy='dynamic')
+	votes = db.relationship('Idea_Vote')
+
+#http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#association-object
+class Idea_Vote(db.Model):
+	__tablename__ = 'idea_vote'
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	idea_id = db.Column(db.Integer, db.ForeignKey('ideas.id'), primary_key=True)
+	vote = db.Column(db.Float)
+	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+	updated_date = db.Column(db.DateTime)
+
 
 class Scientificfield(db.Model):
 	__tablename__ = 'scientificfields'
@@ -91,13 +100,3 @@ class Dataset(db.Model):
 	filesize_bytes = db.Column(db.Float)
 	license = db.Column(db.String(200))
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
-class Idea_Vote(db.Model):
-	__tablename__ = 'idea_vote'
-	id = db.Column(db.Integer, primary_key = True)
-	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-	idea_id = db.Column(db.Integer, db.ForeignKey('ideas.id'))
-	
-	vote = db.column(db.Integer)
-	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-	updated_date = db.Column(db.DateTime)
