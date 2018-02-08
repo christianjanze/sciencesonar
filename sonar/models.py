@@ -1,6 +1,6 @@
 from werkzeug import generate_password_hash, check_password_hash
 import datetime
-from sonar import db
+from sonar import db, app
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -10,11 +10,9 @@ class User(db.Model):
 	username = db.Column(db.String(120), unique=True)
 	password = db.Column(db.String(54))
 	registered_on = db.Column(db.DateTime)
-
 	ideas = db.relationship('Idea', backref='user', lazy='dynamic')
 	datasets = db.relationship('Dataset', backref='user', lazy='dynamic')
 	
-
 	def __init__(self, firstname, lastname, username, password):
 		self.firstname = firstname.title()
 		self.lastname = lastname.title()
@@ -82,6 +80,15 @@ class Idea_Vote(db.Model):
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 	updated_date = db.Column(db.DateTime)
 
+class Dataset_Vote(db.Model):
+	__tablename__ = 'dataset_vote'
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	dataset_id = db.Column(db.Integer, db.ForeignKey('datasets.id'), primary_key=True)
+	vote = db.Column(db.Float)
+	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+	updated_date = db.Column(db.DateTime)
+
+
 
 class Scientificfield(db.Model):
 	__tablename__ = 'scientificfields'
@@ -100,3 +107,4 @@ class Dataset(db.Model):
 	filesize_bytes = db.Column(db.Float)
 	license = db.Column(db.String(200))
 	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+	votes = db.relationship('Dataset_Vote')

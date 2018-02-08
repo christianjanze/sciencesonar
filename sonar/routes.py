@@ -126,7 +126,7 @@ def dataset():
 		return render_template('dataset.html', form=form)
 
 	elif request.method == 'GET':
-		return render_template('dataset.html', form=form)
+		return render_template('dataset_new.html', form=form)
 
 @app.route("/share")
 @login_required
@@ -151,8 +151,21 @@ def discover():
 	n_datasets = Dataset.query.count()
 	now = datetime.datetime.utcnow()
 	ideas = db.session.query(Idea).options(joinedload(Idea.user), joinedload(Idea.tags), joinedload(Idea.scientificfield), joinedload(Idea.votes)).all()
+	datasets = db.session.query(Dataset).options(joinedload(Dataset.user), joinedload(Dataset.votes)).all()
 
-	return render_template('discover.html', ideas=ideas, n_ideas=n_ideas, n_datasets=n_datasets,now=now)
+	#calculate votesums of ideas
+	for idea in ideas:
+		idea.vote_sum=0
+		for vote in idea.votes:
+			idea.vote_sum+=vote.vote
+	
+	#calculate votesums of datasets
+	for dataset in datasets:
+		dataset.vote_sum=0
+		for vote in idea.votes:
+			idea.vote_sum+=vote.vote
+
+	return render_template('discover.html', ideas=ideas, datasets=datasets, n_ideas=n_ideas, n_datasets=n_datasets,now=now)
 
 @app.route("/about")
 def about():
@@ -274,6 +287,11 @@ def edit_idea(idea_id):
 		return render_template('404.html'), 404
 
 
+
+#TODO: MAKE AJAX
+#https://stackoverflow.com/questions/14908864/how-can-i-use-data-posted-from-ajax-in-flask
+#http://flask.pocoo.org/docs/0.12/patterns/jquery/
+
 @app.route('/idea/<int:idea_id>/upvote')
 @login_required
 def upvote_idea(idea_id):
@@ -293,7 +311,7 @@ def upvote_idea(idea_id):
 		db.session.add(vote)
 		db.session.commit()
 		flash("Idea upvoted!", "success")
-		return request.referrer
+		return redirect("/")
 	elif vote and vote.vote is 1:
 		vote.vote=0
 		vote.updated_date=created_date=datetime.datetime.utcnow()
@@ -321,12 +339,12 @@ def downvote_idea(idea_id):
 
 	#Check if vote exists and is not -1:
 	if vote and vote.vote is not -1:
-		vote.vote=-0
+		vote.vote=-1
 		vote.updated_date=created_date=datetime.datetime.utcnow()
 		db.session.add(vote)
 		db.session.commit()
 		flash("Idea downvoted!", "success")
-		return request.referrer
+		return redirect("/")
 	elif vote and vote.vote is -1:
 		vote.vote=0
 		vote.updated_date=created_date=datetime.datetime.utcnow()
@@ -334,8 +352,21 @@ def downvote_idea(idea_id):
 		db.session.commit()
 		return redirect("/")
 	else:
-		new_vote = Idea_Vote(user_id=g.user.id, idea_id=idea_id, vote=1)
+		new_vote = Idea_Vote(user_id=g.user.id, idea_id=idea_id, vote=-1)
 		db.session.add(new_vote)
 		db.session.commit()
 		flash("Idea downvoted", "success")
+		return redirect("/")
+
+@app.route('/dataset/<int:dataset_id>', methods=['GET'])
+@login_required
+def show_dataset(dataset_id):
+
+	now = datetime.datetime.utcnow()
+	dataset = db.session.query(Dataset).filter(Dataset.id==dataset_id).options(joinedload(Dataset.user)).first()
+
+	if dataset:
+		return render_template("dataset_show.html",dataset=dataset,now=now)
+	else:
+		flash("Oops... Something went wrong", "danger")
 		return redirect("/")

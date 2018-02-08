@@ -14,6 +14,8 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 db.init_app(app)
 
+
+
 from flask_login import LoginManager
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -26,3 +28,4 @@ moment = Moment(app)
 
 
 import sonar.routes
+

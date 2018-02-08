@@ -29,17 +29,11 @@
 			{% for idea in ideas %}
 			<div class="row">
 				<div class="col-1">
-					<a href="idea/{{idea.id}}/upvote"><i class="fa fa-chevron-up fa-2x" aria-hidden="true"></i></a></br>
-					<strong>{% for vote in idea.votes %}
-								{% if vote.vote %} 
-									 {{vote.vote}}
-								{% else %}
-									0
-								{% endif %} 
-							{% endfor %}
-							{{idea.total_votes}}
+					<a href="idea/{{idea.id}}/upvote"><i class="fa fa-chevron-up fa-1x" aria-hidden="true"></i></a></br>
+					<strong>
+						{{idea.vote_sum}}
 					</strong></br>
-					<a href="idea/{{idea.id}}/downvote"><i class="fa fa-chevron-down fa-2x" aria-hidden="true"></i></a></br>
+					<a href="idea/{{idea.id}}/downvote"><i class="fa fa-chevron-down fa-1x" aria-hidden="true"></i></a></br>
 				</div>
 				<div class="col-11">
 					<div class="card">
@@ -96,7 +90,61 @@
 
 <div class="tab-pane" id="datasets" role="tabpanel">
 	<div class="container">
-		datasets
+					{% for dataset in datasets %}
+			<div class="row">
+				<div class="col-1">
+					<a href="dataset/{{dataset.id}}/upvote"><i class="fa fa-chevron-up fa-1x" aria-hidden="true"></i></a></br>
+					<strong>
+						{{dataset.vote_sum}}
+					</strong></br>
+					<a href="dataset/{{dataset.id}}/downvote"><i class="fa fa-chevron-down fa-1x" aria-hidden="true"></i></a></br>
+				</div>
+				<div class="col-11">
+					<div class="card">
+						<div class="card-block">
+							<img class="card-img-left" src="http://placehold.it/200x200" alt="Dataset Image">
+
+							<small class="text-muted">{{ dataset.user.firstname}} {{dataset.user.lastname}} | 
+								{% if dataset.updated_date %} 
+								Updated  {{ moment(dataset.updated_date).fromTime(now) }}
+								{% else %}
+								Posted {{ moment(dataset.created_date).fromTime(now) }}
+								{% endif %} 
+							</small>
+
+							{% if dataset.user_id== g.user.id %}
+							<span class="pull-right">
+								<div class="btn-group ml-2">
+									<button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+									<button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="sr-only">Edit</span>
+									</button>
+									<div class="dropdown-menu">
+										<a class="dropdown-item" href="/dataset/{{dataset.id}}/edit">Edit Idea</a>
+										<div class="dropdown-divider"></div>
+										<a class="dropdown-item" href="#">Delete Idea</a>
+									</div>
+								</div>
+							</span>
+							{% endif %}  
+
+							<h4 class="card-title"><a href="dataset/{{dataset.id}}">{% if dataset.is_featured=="yes" %}<span class="badge badge-info">Featured</span> {% endif %} {{dataset.title}}</a>
+
+							</h4>
+							<h6 class="card-subtitle mb-2 text-muted"></h6>
+							<p class="card-text"><div class="text-muted">{{ dataset.description|truncate(250) }}</div></a></p>
+
+						
+							<a href="#" class="card-link"><small class="text-muted"><i class="fa fa-comment-o" aria-hidden="true"></i> Comment</small></a>
+							<a href="#" class="card-link"><small class="text-muted"><i class="fa fa-share" aria-hidden="true"></i> Share</small></a>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</br>
+		{% endfor %}
+
 	</div> <!--end datasets container -->
 </div> <!-- end tab pane -->
 </div> <!-- end tab content  -->

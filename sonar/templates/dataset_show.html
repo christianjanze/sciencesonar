@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="jumbotron jumbotron-fluid">
+	<div class="container">
+		<div class="media">
+			<img class="d-flex mr-3" src="/static/img/field_biology.png" alt="Generic placeholder image">
+			<div class="media-body">
+				<small class="text-muted">{{ dataset.user.firstname}} {{dataset.user.lastname}} | 
+					{% if dataset.updated_date %} 
+					Updated  {{ moment(dataset.updated_date).fromTime(now) }}
+					{% else %}
+					Posted {{ moment(dataset.created_date).fromTime(now) }}
+					{% endif %} 
+					<span class="pull-right">{% if dataset.user_id== g.user.id %}<a href="/dataset/{{dataset.id}}/edit">Edit Dataset</a> {% endif %}</span>
+				</small>
+				<h2 class="mt-0">{{dataset.title}}</h2>
+				<h6> {{ dataset.question }}</h6>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Nav tabs -->
+<div class="container">
+	<div class="extraClass">
+		<ul class="nav nav-tabs" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" data-toggle="tab" href="#description" role="ideas">Dataset Description</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" href="#associated_datasets" role="datasets">Associated Ideas</a>
+			</li>
+		</ul>
+	</div>
+</div>
+<!-- End nav tabs -->
+
+<div class="tab-content">
+	<div class="tab-pane active" id="description" role="tabpanel"> 
+		<div class="container">
+			<div class="row">
+				{{ dataset.description }}  
+			</div>	
+
+		</br>
+		
+		<div class="container">
+			<h3>Similiar Datasets
+				<small class="text-muted">on ScienceSonar</small>
+			</h3>
+
+			<p class="lead">
+				You may also like
+			</p>
+		</div>
+	</div> <!--end description container -->
+</div> <!-- end tab pane -->
+
+<div class="tab-pane" id="associated_datasets" role="tabpanel">
+	<div class="container">
+
+
+	</div> <!--end associated datasets container -->
+</div> <!-- end tab pane -->
+</div> <!-- end tab content  -->
+
+
+
+
+
+{% endblock %}

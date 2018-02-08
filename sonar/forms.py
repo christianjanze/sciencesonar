@@ -1,6 +1,6 @@
 from flask_wtf import Form
 from flask import  flash
-from wtforms import BooleanField, StringField, PasswordField, validators, ValidationError
+from wtforms import BooleanField, StringField, PasswordField, validators
 from wtforms.widgets import TextArea
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from flask_wtf.file import FileField, FileRequired
